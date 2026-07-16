@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 const enquirySchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   company: z.string().min(2, "Enter your company name"),
-  email: z.string().email("Enter a valid email address"),
+  email: z.email("Enter a valid email address"),
   phone: z.string().optional(),
   tradeLane: z.string().min(1, "Select a trade lane"),
   message: z.string().min(10, "Tell us a little more about your shipment"),
@@ -37,6 +37,7 @@ const TRADE_LANES = [
 
 export function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const {
     register,
     handleSubmit,
@@ -47,14 +48,27 @@ export function Contact() {
     defaultValues: { tradeLane: "" },
   });
 
-  async function onSubmit() {
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setSubmitted(true);
+  async function onSubmit(values: EnquiryFormValues) {
+    setSubmitError(false);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      setSubmitError(true);
+    }
   }
 
   function handleSendAnother() {
     reset({ tradeLane: "" });
     setSubmitted(false);
+    setSubmitError(false);
   }
 
   return (
@@ -342,6 +356,14 @@ export function Contact() {
                     </p>
                   )}
                 </div>
+
+                {submitError && (
+                  <p role="alert" className="text-caption text-error">
+                    Something went wrong sending your enquiry. Please try
+                    again, or email us directly at
+                    saravanakumaar@skinternationals.in.
+                  </p>
+                )}
 
                 <Button
                   type="submit"
