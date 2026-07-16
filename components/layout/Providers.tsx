@@ -29,7 +29,25 @@ export function Providers({ children }: ProvidersProps) {
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 
+    function handleAnchorClick(event: MouseEvent) {
+      const anchor = (event.target as HTMLElement).closest?.("a[href^='#']");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      event.preventDefault();
+      lenis.scrollTo(target as HTMLElement, { offset: -100, duration: 1.2 });
+      history.pushState(null, "", hash);
+    }
+
+    document.addEventListener("click", handleAnchorClick);
+
     return () => {
+      document.removeEventListener("click", handleAnchorClick);
       gsap.ticker.remove(onTick);
       lenis.destroy();
       lenisRef.current = null;

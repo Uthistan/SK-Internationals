@@ -1,10 +1,23 @@
+import { Hero } from "@/components/sections/Hero";
+import { TrustBar } from "@/components/sections/TrustBar";
+import { Services } from "@/components/sections/Services";
+import { TradeLanes } from "@/components/sections/TradeLanes";
+import { HowWeWork } from "@/components/sections/HowWeWork";
+import { WhyChooseSK } from "@/components/sections/WhyChooseSK";
+import { CTABand } from "@/components/sections/CTABand";
+import { Contact } from "@/components/sections/Contact";
+
 export default function Home() {
   return (
-    <main className="flex flex-1 items-center justify-center">
-      <p className="text-text-secondary">
-        Homepage sections are being built sprint by sprint per the approved
-        Engineering Blueprint.
-      </p>
-    </main>
+    <>
+      <Hero />
+      <TrustBar />
+      <Services />
+      <TradeLanes />
+      <HowWeWork />
+      <WhyChooseSK />
+      <CTABand />
+      <Contact />
+    </>
   );
 }

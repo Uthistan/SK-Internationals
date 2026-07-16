@@ -30,7 +30,8 @@ Everything about SK Internationals as a business — who they are, who they sell
 | Legal/trading name | SK Internationals |
 | Industry | Freight forwarding, multimodal logistics, NVOCC operations |
 | Founded | 2011 |
-| Base of operations | Chennai and Tuticorin, India — both major maritime centers, strategically chosen |
+| Registered office | SMS Complex, No. 10, 1st Floor, Rani Garden, Opposite Jayendra Saraswathy College, Singanallur, Coimbatore - 641033 |
+| Base of operations | Chennai and Tuticorin, India — both major maritime centers, strategically chosen for port operations |
 | Customer type | B2B exclusively |
 | Operating model | Acts as both freight forwarder and NVOCC; core capabilities managed in-house rather than subcontracted |
 
@@ -191,7 +192,7 @@ SK Internationals should occupy the space a large enterprise 3PL occupies on rel
 Outcomes of the pre-design strategic analysis, recorded here as durable facts so they don't need to be re-derived later.
 
 - **Track record over badges.** No certifications exist yet. Trust is built on tenure (est. 2011), process transparency, and specific verifiable claims — not fabricated or placeholder trust badges. When real certifications or testimonials are provided, they get added; nothing is faked in the meantime.
-- **Personal contact exposure — resolved.** The brochure lists named individuals' personal mobile numbers. The site leads with the quote form and a general company contact channel; named account ownership is introduced as a relationship, not as a publicly scraped personal phone number.
+- **Personal contact exposure — resolved.** The brochure lists several named individuals' personal mobile numbers; most are not published. The client has designated one general contact channel (saravanakumaar@skinternationals.in, +91 88700 15754) for public display in the site's Contact section and footer — the quote form remains the primary conversion path, with this channel as the direct-contact alternative.
 - **Brochure imagery is a data source, not a design constraint.** Photoreal plane/ship/truck renders and literal world-map iconography from the brochure are not carried into the site's visual language — see [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) anti-patterns.
 - **Logo stays, palette can evolve.** The existing SK Internationals logo is the fixed brand identity and is not being redesigned. The site's color palette (navy/orange/slate per [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)) may evolve independently of the brochure's literal orange/navy/green combination while preserving brand recognition.
 - **Two-audience segmentation.** Direct shippers and overseas partners/agents are both real, confirmed audiences. Resolved via a segment toggle inside the quote form rather than a duplicated page/IA — see [UX_GUIDELINES.md](UX_GUIDELINES.md#cta-rules).
