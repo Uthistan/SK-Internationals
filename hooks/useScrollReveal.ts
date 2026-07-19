@@ -32,6 +32,7 @@ export function useScrollReveal(
         duration: 0.6,
         stagger,
         ease: "power2.out",
+        clearProps: "transform,opacity",
         scrollTrigger: { trigger: scopeRef.current, start, once: true },
       });
     },

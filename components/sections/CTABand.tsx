@@ -7,44 +7,48 @@ import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
-import { Link } from "@/components/ui/Link";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function CTABand() {
   const scopeRef = useRef<HTMLDivElement>(null);
-  useScrollReveal(scopeRef, "[data-reveal]", { start: "top 85%", stagger: 0.08 });
+  useScrollReveal(scopeRef, "[data-reveal]", {
+    start: "top 85%",
+    stagger: 0.08,
+  });
 
   return (
-    <Section className="bg-primary">
+    <Section className="bg-secondary">
       <Container>
         <div
           ref={scopeRef}
-          className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center"
+          className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center"
         >
-          <div data-reveal>
+          <div data-reveal className="max-w-lg">
             <Heading as="h2" size="h1" className="text-white">
-              Let&rsquo;s move your next shipment.
+              Let&rsquo;s Move Your Business Forward
             </Heading>
+            <Text as="p" size="body-lg" className="mt-3 text-white/90!">
+              Partner with SK Internationals and experience logistics backed by
+              expertise, transparency, and long-term commitment.
+            </Text>
           </div>
 
-          <Text as="p" size="body-lg" data-reveal className="!text-white/80">
-            Get a clear, itemized quote — or talk to us about becoming a
-            partner.
-          </Text>
-
-          <div
-            data-reveal
-            className="flex flex-wrap items-center justify-center gap-6"
-          >
-            <Button href="#contact">Request a Quote</Button>
-            <Link href="#contact" variant="accent">
-              Partner With Us
-            </Link>
+          <div data-reveal className="flex flex-wrap gap-3.5">
+            <Button
+              href="#contact"
+              variant="secondary"
+              className="bg-accent! text-white!"
+            >
+              Schedule a Consultation
+            </Button>
+            <Button
+              href="#contact"
+              variant="secondary"
+              className="border-white/50! text-white! hover:border-accent! hover:text-accent!"
+            >
+              Request a Quote
+            </Button>
           </div>
-
-          <Text as="p" size="caption" data-reveal className="!text-white/50">
-            We typically respond within one business day.
-          </Text>
         </div>
       </Container>
     </Section>

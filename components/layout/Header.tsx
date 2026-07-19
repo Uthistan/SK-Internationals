@@ -8,7 +8,6 @@ import { ArrowRight, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { NAV_LINKS } from "@/components/layout/nav-links";
-import { useScrolled } from "@/hooks/useScrolled";
 import { cn } from "@/lib/utils";
 
 const MobileNavOverlay = dynamic(() =>
@@ -19,7 +18,7 @@ const MobileNavOverlay = dynamic(() =>
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const scrolled = useScrolled();
+  const [isScrolled, setIsScrolled] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
 
@@ -30,31 +29,48 @@ export function Header() {
     wasOpenRef.current = isMenuOpen;
   }, [isMenuOpen]);
 
-  return (
-    <header className="fixed inset-x-0 top-4 z-50 px-4 md:top-6 md:px-6">
-      <div
-        className={cn(
-          "header-glass relative mx-auto flex h-20 max-w-6xl items-center justify-between rounded-full px-4 md:px-6",
-          scrolled && "header-glass--scrolled",
-        )}
-      >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-linear-to-b from-white/20 via-white/[0.03] to-transparent"
-        />
+  // The navbar stays fully transparent while any part of the hero is on screen,
+  // and only becomes glass once the hero has scrolled completely out of view.
+  useEffect(() => {
+    const hero = document.getElementById("hero");
 
+    // Routes without a hero (none today, but Header is rendered globally) fall
+    // back to switching as soon as the page moves at all.
+    if (!hero) {
+      const handleScroll = () => setIsScrolled(window.scrollY > 8);
+      handleScroll();
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsScrolled(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50",
+        isScrolled ? "header-glass" : "header-transparent",
+      )}
+    >
+      <div className="relative mx-auto flex h-16 w-full max-w-full items-center justify-between px-4 md:h-20 md:max-w-180 md:px-6 lg:max-w-240 xl:max-w-300 xl:px-8 2xl:max-w-330">
         <NextLink
           href="/"
           aria-label="SK Internationals — Home"
           className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Image
-            src="/logo-sk.png"
+            src="/logo.png"
             alt=""
             width={320}
             height={182}
             priority
-            className="h-22 w-auto"
+            className="h-10 w-auto md:h-14"
           />
         </NextLink>
 
@@ -66,7 +82,12 @@ export function Header() {
             <NextLink
               key={link.href}
               href={link.href}
-              className="group relative text-body font-medium whitespace-nowrap text-navbar-text/90 transition-colors hover:text-navbar-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className={cn(
+                "group relative text-body font-medium whitespace-nowrap transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                isScrolled
+                  ? "text-navbar-text/90 hover:text-navbar-text"
+                  : "text-white/90 hover:text-white",
+              )}
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent transition-all duration-200 group-hover:w-full" />
@@ -78,7 +99,7 @@ export function Header() {
           <div className="hidden md:block">
             <Button href="#contact" className="rounded-full!">
               <span className="inline-flex items-center gap-2">
-                Request a Quote
+                Get a Consultation
                 <ArrowRight size={16} aria-hidden="true" />
               </span>
             </Button>
@@ -91,7 +112,10 @@ export function Header() {
             aria-controls="mobile-nav"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             onClick={() => setIsMenuOpen((open) => !open)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-navbar-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:hidden"
+            className={cn(
+              "inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:hidden",
+              isScrolled ? "text-navbar-text" : "text-white",
+            )}
           >
             {isMenuOpen ? (
               <X aria-hidden="true" size={22} />
