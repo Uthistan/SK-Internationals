@@ -77,7 +77,7 @@ export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
               </Link>
             ))}
             <Button href="#contact" onClick={onClose} className="mt-4">
-              Request a Quote
+              Get a Consultation
             </Button>
           </nav>
         </motion.div>

@@ -28,10 +28,10 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent text-white shadow-[0_0_20px_rgba(249,115,22,0.45)] hover:bg-[color-mix(in_srgb,var(--color-accent)_92%,black)] hover:shadow-[0_0_30px_rgba(249,115,22,0.7)]",
+    "bg-primary text-white shadow-[0_0_20px_rgba(234,88,12,0.35)] hover:bg-primary-hover hover:shadow-[0_0_30px_rgba(234,88,12,0.55)]",
   secondary:
-    "border border-primary text-primary hover:border-accent hover:text-accent",
-  ghost: "text-primary hover:text-accent",
+    "border border-secondary text-secondary hover:border-primary hover:text-primary",
+  ghost: "text-secondary hover:text-primary",
 };
 
 export function Button({ variant = "primary", className, children, href, ...rest }: ButtonProps) {

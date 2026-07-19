@@ -42,23 +42,28 @@ Motion is governed separately — see [MOTION_GUIDELINES.md](MOTION_GUIDELINES.m
 
 | Token | Hex | Role |
 |---|---|---|
-| `primary` | `#0F172A` | Headlines, primary text-on-light, dark UI surfaces |
-| `accent` | `#F97316` | CTAs, active states, key highlights only |
-| `background` | `#F8FAFC` | Page and section backgrounds |
+| `primary` | `#EA580C` | Buttons, icons, links, active states — the one accent color. Never a large fill. |
+| `primary-hover` | `#C2410C` | Hover/pressed state for `primary` elements |
+| `secondary` | `#18181B` | Dark UI surfaces — reserved for the Stats band, CTA bands, and the Footer only |
+| `accent` | `#EA580C` | Alias of `primary`, kept for existing call sites |
+| `background` | `#FAFAFA` | Page and section backgrounds |
 | `surface` | `#FFFFFF` | Cards, forms, elevated panels |
-| `text` | `#111827` | Body copy |
-| `text-secondary` | `#6B7280` | Supporting copy, captions, metadata |
-| `border` | `#E2E8F0` | Dividers, input borders |
+| `surface-alt` | `#F5F2EC` | Alternating warm section backgrounds (services, stats, contact form panel) |
+| `text` | `#111827` | Headlines and body copy |
+| `text-secondary` (`muted`) | `#4B5563` | Supporting copy, captions, metadata |
+| `border` | `#E5E7EB` | Dividers, input borders |
 | `success` | `#16A34A` | Form success states |
 | `error` | `#DC2626` | Form validation errors |
+
+**2026-07-19 rebrand:** orange (`primary`/`accent`) is deliberately restricted to small interactive surfaces (buttons, icons, links, active-tab states) — never section backgrounds or headline text. Headlines/body text on light backgrounds use `text`. Large dark surfaces use `secondary` and are limited to the Stats band, CTA bands, and the Footer; everything else stays white/`background`/`surface-alt`.
 
 ### Usage rule: 60 / 30 / 10
 
 | Share | Role | Tokens |
 |---|---|---|
 | 60% | Neutral base | `background`, `surface` |
-| 30% | Structure & text | `primary`, `text`, `text-secondary` |
-| 10% | Emphasis | `accent` |
+| 30% | Structure & text | `secondary` (dark bands only), `text`, `text-secondary` |
+| 10% | Emphasis | `primary` / `accent` |
 
 ```mermaid
 pie showData
@@ -225,13 +230,16 @@ Canonical implementation target for `app/globals.css`, replacing the current Nex
 @import "tailwindcss";
 
 :root {
-  --color-primary: #0f172a;
-  --color-accent: #f97316;
-  --color-background: #f8fafc;
+  --color-primary: #ea580c;
+  --color-primary-hover: #c2410c;
+  --color-secondary: #18181b;
+  --color-accent: #ea580c;
+  --color-background: #fafafa;
   --color-surface: #ffffff;
+  --color-surface-alt: #f5f2ec;
   --color-text: #111827;
-  --color-text-secondary: #6b7280;
-  --color-border: #e2e8f0;
+  --color-text-secondary: #4b5563;
+  --color-border: #e5e7eb;
   --color-success: #16a34a;
   --color-error: #dc2626;
 
@@ -243,9 +251,12 @@ Canonical implementation target for `app/globals.css`, replacing the current Nex
 
 @theme inline {
   --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-secondary: var(--color-secondary);
   --color-accent: var(--color-accent);
   --color-background: var(--color-background);
   --color-surface: var(--color-surface);
+  --color-surface-alt: var(--color-surface-alt);
   --color-text: var(--color-text);
   --color-text-secondary: var(--color-text-secondary);
   --color-border: var(--color-border);

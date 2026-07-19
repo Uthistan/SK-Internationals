@@ -25,29 +25,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid submission" }, { status: 400 });
   }
 
-  const { name, company, email, phone, tradeLane, message } = parsed.data;
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  const { error } = await resend.emails.send({
-    from: "SK Internationals Website <onboarding@resend.dev>",
-    to: "saravanakumaar@skinternationals.in",
-    replyTo: email,
-    subject: `New enquiry from ${company}`,
-    text: [
-      `Name: ${name}`,
-      `Company: ${company}`,
-      `Email: ${email}`,
-      `Phone: ${phone || "—"}`,
-      `Trade lane: ${TRADE_LANE_LABELS[tradeLane] ?? tradeLane}`,
-      "",
-      "Shipment details:",
-      message,
-    ].join("\n"),
-  });
-
-  if (error) {
+  if (!process.env.RESEND_API_KEY) {
+    console.error("RESEND_API_KEY is not set — cannot send enquiry email.");
     return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
   }
 
-  return NextResponse.json({ success: true });
+  const { name, company, email, phone, tradeLane, message } = parsed.data;
+
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    const { error } = await resend.emails.send({
+      from: "SK Internationals Website <onboarding@resend.dev>",
+      to: "uthistan666@gmail.com",
+      replyTo: email,
+      subject: `New enquiry from ${company}`,
+      text: [
+        `Name: ${name}`,
+        `Company: ${company}`,
+        `Email: ${email}`,
+        `Phone: ${phone || "—"}`,
+        `Trade lane: ${TRADE_LANE_LABELS[tradeLane] ?? tradeLane}`,
+        "",
+        "Shipment details:",
+        message,
+      ].join("\n"),
+    });
+
+    if (error) {
+      return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Failed to send enquiry email:", err);
+    return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
+  }
 }

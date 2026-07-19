@@ -19,8 +19,9 @@ export function Card({
   return (
     <Tag
       className={cn(
-        "rounded-lg bg-surface p-6 shadow-sm md:p-8",
-        interactive && "transition-shadow hover:shadow-md",
+        "rounded-2xl border border-border bg-surface p-7 md:p-9",
+        interactive &&
+          "transition-colors duration-300 ease-out hover:border-secondary/25",
         className,
       )}
       {...rest}

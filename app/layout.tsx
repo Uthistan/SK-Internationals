@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 
 import { Providers } from "@/components/layout/Providers";
+import { Preloader } from "@/components/layout/Preloader";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
@@ -40,6 +42,8 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>
+          <Preloader />
+          <ScrollProgressBar />
           <SkipLink />
           <Header />
           <main id="main-content" className="flex flex-1 flex-col">
