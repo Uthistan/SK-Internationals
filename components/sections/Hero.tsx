@@ -9,9 +9,11 @@ import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
 import { HeroScene } from "@/components/sections/HeroScene";
 import { PRELOADER_HOLD_MS } from "@/components/layout/Preloader";
+import { ROUTES } from "@/components/layout/nav-links";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { ButtonGroup } from "@/components/ui/ButtonGroup";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const HERO_FEATURES = [
@@ -39,21 +41,26 @@ export function Hero() {
     () => {
       if (prefersReducedMotion) return;
 
-      // Entrance beats start as the preloader begins fading out.
+      // Entrance beats start as the preloader begins fading out — but the
+      // preloader only runs when the visitor entered the site here. Arriving
+      // from another route, the hero must open immediately rather than sit
+      // invisible behind a splash that never appears.
+      const hasPreloader = Boolean(document.querySelector("[data-preloader]"));
+
       gsap
         .timeline({
-          delay: PRELOADER_HOLD_MS / 1000 - 0.1,
+          delay: hasPreloader ? PRELOADER_HOLD_MS / 1000 - 0.1 : 0,
           defaults: { ease: "power2.out" },
         })
         .from(eyebrowRef.current, { y: 16, opacity: 0, duration: 0.5 }, 0)
-        .from(
-          headlineRef.current,
-          { y: 24, opacity: 0, duration: 0.6 },
-          0.3,
-        )
+        .from(headlineRef.current, { y: 24, opacity: 0, duration: 0.6 }, 0.3)
         .from(subheadRef.current, { y: 16, opacity: 0, duration: 0.5 }, "-=0.3")
         .from(ctaRef.current, { y: 16, opacity: 0, duration: 0.5 }, "-=0.3")
-        .from(featuresRef.current, { y: 16, opacity: 0, duration: 0.5 }, "-=0.2")
+        .from(
+          featuresRef.current,
+          { y: 16, opacity: 0, duration: 0.5 },
+          "-=0.2",
+        )
         .from(scrollCueRef.current, { opacity: 0, duration: 0.4 }, "-=0.1");
 
       // Cinematic exit: content drifts up and fades as the visitor scrolls
@@ -79,7 +86,8 @@ export function Hero() {
   return (
     <Section
       id="hero"
-      className="relative flex min-h-[90dvh] flex-col justify-end overflow-hidden bg-secondary py-16"
+      data-header-scrim
+      className="relative flex min-h-dvh flex-col justify-end overflow-hidden bg-scrim py-16"
     >
       <video
         ref={videoRef}
@@ -95,7 +103,7 @@ export function Hero() {
       </video>
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-linear-to-t from-secondary/95 via-secondary/70 to-secondary/40"
+        className="absolute inset-0 bg-linear-to-t from-scrim/95 via-scrim/70 to-scrim/40"
       />
 
       <HeroScene />
@@ -103,7 +111,7 @@ export function Hero() {
       <Container>
         <div
           ref={scopeRef}
-          className="relative z-10 flex flex-col items-start gap-6"
+          className="relative z-10 flex flex-col items-start gap-10"
         >
           <div ref={eyebrowRef}>
             <span className="text-caption font-semibold tracking-widest text-white/70 uppercase">
@@ -112,29 +120,45 @@ export function Hero() {
           </div>
 
           <div ref={headlineRef}>
-            <Heading as="h1" size="display" className="max-w-3xl text-white">
-              Powering Businesses Through <br /> Reliable Logistics
+            {/* Two fixed lines at every width. Sized per breakpoint rather than
+                by a single vw clamp because Container's max-width steps at md/lg
+                — a viewport-only formula overflows just below each step.
+                Below md the vw term leads so the headline fills the phone
+                screen; its ceiling is set by "Through Reliable Logistics"
+                staying on one line inside the 16px gutters. */}
+            <Heading
+              as="h1"
+              size="display"
+              className="max-w-6xl text-[clamp(1.35rem,6.8vw,2.75rem)]! text-white md:text-[2.5rem]! lg:text-[3.5rem]! xl:text-[4.25rem]!"
+            >
+              <span className="block whitespace-nowrap text-accent">
+                Powering Businesses
+              </span>
+              <span className="block whitespace-nowrap">
+                Through Reliable Logistics
+              </span>
             </Heading>
           </div>
 
           <div ref={subheadRef}>
             <Text as="p" size="body-lg" className="max-w-xl text-white/80!">
-              From domestic transportation to international export
-              solutions, SK Internationals delivers seamless logistics with
-              reliability, transparency, and a commitment to long-term
-              partnerships.
+              From domestic transportation to international export solutions, SK
+              Internationals delivers seamless logistics with reliability,
+              transparency, and a commitment to long-term partnerships.
             </Text>
           </div>
 
-          <div ref={ctaRef} className="flex flex-wrap items-center gap-4">
-            <Button href="#contact">Get a Free Consultation</Button>
-            <Button
-              href="#services"
-              variant="secondary"
-              className="border-white/50! text-white! hover:border-accent! hover:text-accent!"
-            >
-              Explore Our Services
-            </Button>
+          <div ref={ctaRef} className="w-full">
+            <ButtonGroup>
+              <Button href={ROUTES.contact}>Get a Free Consultation</Button>
+              <Button
+                href={ROUTES.services}
+                variant="secondary"
+                className="border-white/50! text-white! hover:border-accent! hover:text-accent!"
+              >
+                Explore Our Services
+              </Button>
+            </ButtonGroup>
           </div>
 
           <div

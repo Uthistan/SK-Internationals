@@ -37,14 +37,29 @@ export function WhyChooseSK() {
             </ul>
           </div>
 
-          <div className="flex items-center justify-center">
+          {/* Portrait crop so the photograph holds its own against the seven
+              claims beside it, rather than floating as a spot illustration. */}
+          <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl lg:aspect-3/4">
             <Image
-              src="/forklift.png"
+              src="/images/services/warehousing.jpg"
               alt=""
-              width={640}
-              height={364}
-              className="h-auto w-full max-w-xs sm:max-w-sm lg:max-w-md"
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover"
             />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-linear-to-t from-secondary/90 via-secondary/20 to-transparent"
+            />
+
+            <div className="absolute inset-x-5 bottom-5 border-t border-white/20 pt-4 md:inset-x-7 md:bottom-7">
+              <p className="text-caption font-semibold tracking-widest text-accent uppercase">
+                Operational Bases
+              </p>
+              <p className="mt-1.5 text-body font-medium text-white">
+                Chennai · Tuticorin
+              </p>
+            </div>
           </div>
         </div>
       </Container>

@@ -10,6 +10,7 @@ import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { ROUTES } from "@/components/layout/nav-links";
 import { SERVICES } from "@/content/services";
 import { cn } from "@/lib/utils";
 
@@ -20,21 +21,9 @@ export function Services() {
   return (
     <Section id="services" className="bg-surface-alt">
       <Container>
-        <div className="max-w-2xl">
-          <span className="text-caption font-semibold tracking-widest text-accent uppercase">
-            What We Do
-          </span>
-          <Heading as="h2" size="h1" className="mt-4 text-text">
-            Integrated Logistics &amp; Trade Solutions
-          </Heading>
-          <Text as="p" size="body-lg" color="secondary" className="mt-4">
-            From transportation and freight forwarding to customs clearance
-            and export guidance, our services are built to ensure efficiency,
-            reliability, and peace of mind at every stage of your journey.
-          </Text>
-        </div>
-
-        <div className="mt-16 md:mt-20">
+        {/* The headline lives in the page hero — this section opens straight
+            into the service the visitor is inspecting. */}
+        <div>
           <div
             id="service-detail-panel"
             role="tabpanel"
@@ -76,7 +65,7 @@ export function Services() {
                   <p className="text-caption font-bold tracking-widest text-accent uppercase">
                     {active.num} — {active.tag}
                   </p>
-                  <Heading as="h3" size="h1" className="mt-3 max-w-2xl text-white">
+                  <Heading as="h2" size="h1" className="mt-3 max-w-2xl text-white">
                     {active.desc}
                   </Heading>
                   <Text
@@ -86,8 +75,8 @@ export function Services() {
                   >
                     {active.body}
                   </Text>
-                  <Button href="#contact" className="mt-6">
-                    Explore All Services
+                  <Button href={ROUTES.contact} className="mt-6">
+                    Discuss This Service
                   </Button>
                 </motion.div>
               </AnimatePresence>
@@ -145,7 +134,7 @@ export function Services() {
 
         <div className="mt-24 flex flex-col items-start gap-8 rounded-3xl bg-secondary p-9 md:flex-row md:items-center md:justify-between md:p-14">
           <div className="max-w-xl">
-            <Heading as="h3" size="h2" className="text-white">
+            <Heading as="h2" size="h2" className="text-white">
               Need a Logistics Solution Tailored to Your Business?
             </Heading>
             <Text as="p" className="mt-2.5 text-white/70!">
@@ -155,7 +144,7 @@ export function Services() {
               operations.
             </Text>
           </div>
-          <Button href="#contact" className="shrink-0">
+          <Button href={ROUTES.contact} className="shrink-0">
             Schedule a Consultation
           </Button>
         </div>

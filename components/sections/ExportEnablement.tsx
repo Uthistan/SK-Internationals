@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { ROUTES } from "@/components/layout/nav-links";
 import { EXPORT_ADVISORY, EXPORT_STEPS } from "@/content/export-advisory";
 
 export function ExportEnablement() {
@@ -58,7 +59,7 @@ export function ExportEnablement() {
           ))}
         </div>
 
-        <Button href="#contact" className="mt-16">
+        <Button href={ROUTES.contact} className="mt-16">
           Schedule an Export Consultation
         </Button>
       </Container>

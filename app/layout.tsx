@@ -7,6 +7,8 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ROUTES } from "@/components/layout/nav-links";
+import { ORGANIZATION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -18,16 +20,50 @@ const manrope = Manrope({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "SK Internationals — Global B2B Freight & Logistics",
     template: "%s — SK Internationals",
   },
   description:
     "SK Internationals delivers reliable, transparent freight forwarding and logistics across the Gulf, Red Sea, and Indian Sub-Continent.",
+  alternates: { canonical: ROUTES.home },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    url: ROUTES.home,
+    images: ["/hero-port.jpg"],
+  },
+  twitter: { card: "summary_large_image" },
+};
+
+// Organization details only — nothing here is claimed that the contact section
+// doesn't already state on the page.
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: ORGANIZATION.name,
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo.png`,
+  foundingDate: ORGANIZATION.foundingDate,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: ORGANIZATION.addressLocality,
+    postalCode: ORGANIZATION.postalCode,
+    addressRegion: ORGANIZATION.addressRegion,
+    addressCountry: ORGANIZATION.addressCountry,
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    telephone: ORGANIZATION.telephone,
+    email: ORGANIZATION.email,
+    areaServed: "Worldwide",
+  },
 };
 
 export default function RootLayout({
@@ -51,6 +87,12 @@ export default function RootLayout({
           </main>
           <Footer />
         </Providers>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
       </body>
     </html>
   );

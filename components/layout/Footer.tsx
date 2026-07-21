@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/Container";
 import { Link } from "@/components/ui/Link";
 import { Text } from "@/components/ui/Text";
 import { Heading } from "@/components/ui/Heading";
+import { ROUTES } from "@/components/layout/nav-links";
 import { SERVICES } from "@/content/services";
 import {
   FacebookIcon,
@@ -11,16 +12,18 @@ import {
   LinkedInIcon,
 } from "@/components/icons/SocialIcons";
 
+// Every service resolves to the same page until per-service routes exist —
+// listing them individually still tells a scanner what we actually do.
 const SERVICE_LINKS = SERVICES.map((service) => ({
   label: service.title,
-  href: "#services",
+  href: ROUTES.services,
 }));
 
 const COMPANY_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Industries", href: "#industries" },
-  { label: "Contact", href: "#contact" },
-  { label: "Request a Quote", href: "#contact" },
+  { label: "About", href: ROUTES.about },
+  { label: "Industries", href: ROUTES.industries },
+  { label: "Contact", href: ROUTES.contact },
+  { label: "Request a Quote", href: ROUTES.contact },
 ];
 
 const SOCIAL_LINKS = [

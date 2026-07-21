@@ -19,8 +19,10 @@ import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { ButtonGroup } from "@/components/ui/ButtonGroup";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { DESTINATION_GROUPS } from "@/content/destinations";
 import { cn } from "@/lib/utils";
 
 const enquirySchema = z.object({
@@ -28,7 +30,7 @@ const enquirySchema = z.object({
   company: z.string().min(2, "Enter your company name"),
   email: z.email("Enter a valid email address"),
   phone: z.string().optional(),
-  tradeLane: z.string().min(1, "Select a trade lane"),
+  destination: z.string().min(1, "Select a destination"),
   message: z.string().min(10, "Tell us a little more about your shipment"),
 });
 
@@ -42,12 +44,6 @@ const labelClasses = "text-caption font-semibold text-text";
 const WHATSAPP_HREF = `https://wa.me/918870015754?text=${encodeURIComponent(
   "Hi SK Internationals, I just submitted an enquiry on your website.",
 )}`;
-
-const TRADE_LANES = [
-  { value: "gulf", label: "Persian & Arabian Gulf" },
-  { value: "red-sea", label: "Red Sea" },
-  { value: "indian-subcontinent", label: "Indian Sub-Continent" },
-];
 
 // Network canvas is authored wide (1200×440) and rendered in a matching
 // wide band so the full route geometry stays visible rather than cropping.
@@ -129,7 +125,7 @@ export function Contact() {
     formState: { errors, isSubmitting },
   } = useForm<EnquiryFormValues>({
     resolver: zodResolver(enquirySchema),
-    defaultValues: { tradeLane: "" },
+    defaultValues: { destination: "" },
   });
 
   async function onSubmit(values: EnquiryFormValues) {
@@ -150,7 +146,7 @@ export function Contact() {
   }
 
   function handleSendAnother() {
-    reset({ tradeLane: "" });
+    reset({ destination: "" });
     setSubmitted(false);
     setSubmitError(false);
   }
@@ -158,24 +154,12 @@ export function Contact() {
   return (
     <Section id="contact" className="bg-surface-alt">
       <Container>
-        <div className="max-w-3xl">
-          <span className="text-caption font-semibold tracking-widest text-accent uppercase">
-            Get in Touch
-          </span>
-          <Heading as="h2" size="h1" className="mt-5 text-text">
-            Have a Logistics Requirement or Planning Your Next Export?
-          </Heading>
-          <Text as="p" size="body-lg" color="secondary" className="mt-5">
-            We&rsquo;re here to provide reliable solutions and expert guidance
-            tailored to your business.
-          </Text>
-        </div>
-
+        {/* The headline and lead live in the page hero above. */}
         <div ref={scopeRef}>
           {/* Global network band — wide aspect so the full route canvas is visible. */}
           <div
             data-reveal
-            className="relative mt-12 aspect-4/3 w-full overflow-hidden rounded-3xl bg-secondary sm:aspect-2/1 md:mt-16 lg:aspect-1200/440"
+            className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-secondary sm:aspect-2/1 lg:aspect-1200/440"
           >
             <div
               aria-hidden="true"
@@ -405,14 +389,14 @@ export function Contact() {
                       className="text-success"
                     />
                   </span>
-                  <Heading as="h3" size="h2" className="text-text">
+                  <Heading as="h2" size="h2" className="text-text">
                     Enquiry received.
                   </Heading>
                   <Text as="p" size="body-lg" color="secondary">
                     We typically respond within one business day with next
                     steps.
                   </Text>
-                  <div className="mt-2 flex flex-wrap gap-3">
+                  <ButtonGroup className="mt-2 w-full">
                     <Button
                       href={WHATSAPP_HREF}
                       target="_blank"
@@ -426,7 +410,7 @@ export function Contact() {
                     <Button variant="secondary" onClick={handleSendAnother}>
                       Send another enquiry
                     </Button>
-                  </div>
+                  </ButtonGroup>
                 </div>
               ) : (
                 <form
@@ -435,7 +419,7 @@ export function Contact() {
                   className="flex flex-col gap-6"
                 >
                   <div>
-                    <Heading as="h3" size="h3" className="text-text">
+                    <Heading as="h2" size="h3" className="text-text">
                       Request a Quote
                     </Heading>
                     <Text as="p" color="secondary" className="mt-1.5">
@@ -559,39 +543,46 @@ export function Contact() {
                   </div>
 
                   <div>
-                    <label htmlFor="tradeLane" className={labelClasses}>
-                      Trade lane
+                    <label htmlFor="destination" className={labelClasses}>
+                      Destination / country of export
                     </label>
                     <select
-                      id="tradeLane"
-                      aria-invalid={!!errors.tradeLane}
+                      id="destination"
+                      aria-invalid={!!errors.destination}
                       aria-describedby={
-                        errors.tradeLane ? "tradeLane-error" : undefined
+                        errors.destination ? "destination-error" : undefined
                       }
                       className={cn(
                         inputClasses,
                         "mt-2",
-                        errors.tradeLane && "border-error",
+                        errors.destination && "border-error",
                       )}
                       defaultValue=""
-                      {...register("tradeLane")}
+                      {...register("destination")}
                     >
                       <option value="" disabled>
-                        Select a trade lane
+                        Select a destination
                       </option>
-                      {TRADE_LANES.map((lane) => (
-                        <option key={lane.value} value={lane.value}>
-                          {lane.label}
-                        </option>
+                      {DESTINATION_GROUPS.map((group) => (
+                        <optgroup key={group.region} label={group.region}>
+                          {group.destinations.map((destination) => (
+                            <option
+                              key={destination.value}
+                              value={destination.value}
+                            >
+                              {destination.label}
+                            </option>
+                          ))}
+                        </optgroup>
                       ))}
                     </select>
-                    {errors.tradeLane && (
+                    {errors.destination && (
                       <p
-                        id="tradeLane-error"
+                        id="destination-error"
                         role="alert"
                         className="mt-1.5 text-caption text-error"
                       >
-                        {errors.tradeLane.message}
+                        {errors.destination.message}
                       </p>
                     )}
                   </div>

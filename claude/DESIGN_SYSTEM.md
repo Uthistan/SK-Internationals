@@ -44,18 +44,21 @@ Motion is governed separately — see [MOTION_GUIDELINES.md](MOTION_GUIDELINES.m
 |---|---|---|
 | `primary` | `#EA580C` | Buttons, icons, links, active states — the one accent color. Never a large fill. |
 | `primary-hover` | `#C2410C` | Hover/pressed state for `primary` elements |
-| `secondary` | `#18181B` | Dark UI surfaces — reserved for the Stats band, CTA bands, and the Footer only |
+| `secondary` | `#0B2545` | Dark UI surfaces — reserved for the Hero, CTA bands, and the Footer only |
 | `accent` | `#EA580C` | Alias of `primary`, kept for existing call sites |
 | `background` | `#FAFAFA` | Page and section backgrounds |
 | `surface` | `#FFFFFF` | Cards, forms, elevated panels |
 | `surface-alt` | `#F5F2EC` | Alternating warm section backgrounds (services, stats, contact form panel) |
-| `text` | `#111827` | Headlines and body copy |
-| `text-secondary` (`muted`) | `#4B5563` | Supporting copy, captions, metadata |
-| `border` | `#E5E7EB` | Dividers, input borders |
+| `text` | `#0B2545` | Headlines and body copy |
+| `text-secondary` (`muted`) | `#3D5878` | Supporting copy, captions, metadata |
+| `border` | `#DDE3EC` | Dividers, input borders |
+| `scrim` | `#18181B` | Neutral gradient over hero footage/photography only — the pre-navy tint, kept so video reads true to colour. Never text, never a UI surface. |
 | `success` | `#16A34A` | Form success states |
 | `error` | `#DC2626` | Form validation errors |
 
 **2026-07-19 rebrand:** orange (`primary`/`accent`) is deliberately restricted to small interactive surfaces (buttons, icons, links, active-tab states) — never section backgrounds or headline text. Headlines/body text on light backgrounds use `text`. Large dark surfaces use `secondary` and are limited to the Stats band, CTA bands, and the Footer; everything else stays white/`background`/`surface-alt`.
+
+**2026-07-21 client revision — no black:** the palette is now **orange, white, and deep navy only**. Every near-black value was replaced by navy `#0B2545`: `secondary` (dark panels), `text`, `navbar-text`, and the header shadow; `text-secondary` moved to the navy-tinted `#3D5878` and `border` to `#DDE3EC`. Pure black (`#000`, `text-black`, `rgba(0,0,0,…)`) must not appear anywhere in the codebase — including shadows and overlays.
 
 ### Usage rule: 60 / 30 / 10
 
@@ -232,14 +235,14 @@ Canonical implementation target for `app/globals.css`, replacing the current Nex
 :root {
   --color-primary: #ea580c;
   --color-primary-hover: #c2410c;
-  --color-secondary: #18181b;
+  --color-secondary: #0b2545;
   --color-accent: #ea580c;
   --color-background: #fafafa;
   --color-surface: #ffffff;
   --color-surface-alt: #f5f2ec;
-  --color-text: #111827;
-  --color-text-secondary: #4b5563;
-  --color-border: #e5e7eb;
+  --color-text: #0b2545;
+  --color-text-secondary: #3d5878;
+  --color-border: #dde3ec;
   --color-success: #16a34a;
   --color-error: #dc2626;
 

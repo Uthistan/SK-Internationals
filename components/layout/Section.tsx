@@ -1,17 +1,23 @@
-import type { ElementType, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-interface SectionProps {
+interface SectionProps extends ComponentPropsWithoutRef<"section"> {
   as?: ElementType;
-  id?: string;
-  className?: string;
   children: ReactNode;
 }
 
-export function Section({ as: Tag = "section", id, className, children }: SectionProps) {
+export function Section({
+  as: Tag = "section",
+  className,
+  children,
+  ...rest
+}: SectionProps) {
   return (
-    <Tag id={id} className={cn("py-20 md:py-32 lg:py-40", className)}>
+    // Rest props pass through so callers can attach data attributes — the
+    // header reads `data-header-scrim` off the hero to decide whether it may
+    // stay transparent.
+    <Tag className={cn("py-20 md:py-32 lg:py-40", className)} {...rest}>
       {children}
     </Tag>
   );

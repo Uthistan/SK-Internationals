@@ -2,20 +2,16 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
+import { DESTINATION_LABELS } from "@/content/destinations";
+
 const enquirySchema = z.object({
   name: z.string().min(2),
   company: z.string().min(2),
   email: z.email(),
   phone: z.string().optional(),
-  tradeLane: z.string().min(1),
+  destination: z.string().min(1),
   message: z.string().min(10),
 });
-
-const TRADE_LANE_LABELS: Record<string, string> = {
-  gulf: "Persian & Arabian Gulf",
-  "red-sea": "Red Sea",
-  "indian-subcontinent": "Indian Sub-Continent",
-};
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -30,7 +26,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
   }
 
-  const { name, company, email, phone, tradeLane, message } = parsed.data;
+  const { name, company, email, phone, destination, message } = parsed.data;
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -45,7 +41,9 @@ export async function POST(request: Request) {
         `Company: ${company}`,
         `Email: ${email}`,
         `Phone: ${phone || "—"}`,
-        `Trade lane: ${TRADE_LANE_LABELS[tradeLane] ?? tradeLane}`,
+        `Destination / country of export: ${
+          DESTINATION_LABELS[destination] ?? destination
+        }`,
         "",
         "Shipment details:",
         message,

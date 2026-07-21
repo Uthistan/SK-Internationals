@@ -3,20 +3,30 @@
 @theme {
   --color-primary: #ea580c;
   --color-primary-hover: #c2410c;
-  --color-secondary: #18181b;
+  --color-secondary: #0b2545;
   --color-accent: #ea580c;
   --color-background: #fafafa;
   --color-surface: #ffffff;
   --color-surface-alt: #f5f2ec;
-  --color-text: #111827;
-  --color-text-secondary: #4b5563;
-  --color-border: #e5e7eb;
+  --color-text: #0b2545;
+  --color-text-secondary: #3d5878;
+  --color-border: #dde3ec;
   --color-success: #16a34a;
   --color-error: #dc2626;
 
+  /* Neutral scrim for footage and photography only — the pre-navy hero tint,
+     kept so the video reads true to colour instead of turning blue. Never
+     used for text or UI surfaces. */
+  --color-scrim: #18181b;
+
+  /* Route colour for the network map. A step lighter than the UI accent
+     because a 1.6px line has to survive a soft glow on a white surface —
+     #ea580c reads muddy at that weight, this holds its hue. */
+  --color-route: #f97316;
+
   --color-navbar-glass: rgba(255, 255, 255, 0.65);
   --color-navbar-border: rgba(255, 255, 255, 0.2);
-  --color-navbar-text: #18181b;
+  --color-navbar-text: #0b2545;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -65,6 +75,17 @@ h6 {
   font-family: var(--font-heading), sans-serif;
 }
 
+/* Anchors get a pointer from the browser, but Tailwind's reset leaves buttons
+   with the default arrow. Anything that responds to a click should say so —
+   including the tab, accordion, and carousel controls, which are all buttons.
+   Disabled controls are excluded so they keep reading as unavailable. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+summary {
+  cursor: pointer;
+}
+
 .header-glass,
 .header-transparent {
   border-width: 1px;
@@ -81,7 +102,7 @@ h6 {
   border-color: var(--color-navbar-border);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(11, 37, 69, 0.12);
 }
 
 .header-transparent {
@@ -89,11 +110,11 @@ h6 {
   border-color: transparent;
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
+  box-shadow: 0 8px 32px rgba(11, 37, 69, 0);
 }
 
 .mobile-nav-glass {
-  background: rgba(24, 24, 27, 0.999);
+  background: rgba(11, 37, 69, 0.999);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   transform: translateZ(0);
@@ -108,6 +129,104 @@ h6 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* --- Network map route traces ------------------------------------------- */
+
+/* Draw out from the origin, hold the finished route, then drain from the same
+   end — a continuous cycle rather than a one-shot, so the map keeps moving
+   however long the visitor stays with it. Offset runs 1 → 0 → −1: at −1 the
+   dash has travelled a full path length past its start, clearing the line. */
+@keyframes route-draw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  42% {
+    stroke-dashoffset: 0;
+  }
+  58% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+
+/* Corridors declare pathLength="1", normalising every route to the same
+   length — so one duration draws a short domestic hop and a trans-Atlantic
+   arc at the same apparent speed. Resting state is fully retracted; the
+   drawing class is added once the map scrolls into view. */
+.route-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.route-line--drawing {
+  animation: route-draw 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Travel is pinned to the draw phase, then the light waits out the hold and
+   drain at the destination with no opacity. */
+@keyframes route-pulse-travel {
+  0% {
+    offset-distance: 0%;
+  }
+  42% {
+    offset-distance: 100%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes route-pulse-fade {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 1;
+  }
+  46% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The light riding the head of the line. Same duration, easing, and delay as
+   the draw, so it stays pinned to the growing tip. Hidden entirely where
+   offset-path is unsupported — otherwise the dot would strand itself at the
+   SVG origin instead of following the route. */
+.route-pulse {
+  display: none;
+}
+
+@supports (offset-path: path("M0 0")) {
+  .route-pulse {
+    display: block;
+    offset-rotate: 0deg;
+    animation:
+      route-pulse-travel 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite,
+      route-pulse-fade 4.5s linear infinite;
+  }
+}
+
+/* A looping draw can't just be shortened: the global reduce rule would land it
+   on its final frame, which is the drained one — every route would vanish.
+   These visitors get the finished map instead. */
+@media (prefers-reduced-motion: reduce) {
+  .route-line--drawing {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .route-pulse {
+    display: none;
   }
 }
 
@@ -141,6 +260,17 @@ h6 {
 .marquee:hover .marquee__track,
 .marquee:focus-within .marquee__track {
   animation-play-state: paused;
+}
+
+/* Arrow carousels drive scrolling with buttons, so the native bar is redundant
+   — keyboard and touch scrolling are untouched. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .bg-dot-pattern {

@@ -28,7 +28,11 @@ export const ABOUT_HIGHLIGHTS: AboutHighlight[] = [
 ];
 
 export const ABOUT_STATS = {
-  years: { target: 14, label: "Delivering trusted logistics solutions since 2011" },
+  years: {
+    target: 14,
+    unit: "years",
+    label: "Delivering trusted logistics solutions since 2011",
+  },
   experience: { target: 20, label: "Combined industry expertise within our team" },
   businesses: { target: 50, label: "Businesses trusted across diverse industries" },
 };

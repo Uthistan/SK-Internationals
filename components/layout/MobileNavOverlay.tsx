@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { NAV_LINKS } from "@/components/layout/nav-links";
+import { NAV_LINKS, ROUTES } from "@/components/layout/nav-links";
+import { cn } from "@/lib/utils";
 
 interface MobileNavOverlayProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ interface MobileNavOverlayProps {
 
 export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   useFocusTrap(containerRef, isOpen);
 
   useEffect(() => {
@@ -65,18 +68,23 @@ export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
             aria-label="Primary"
             className="flex flex-1 flex-col items-center justify-center gap-8 px-6"
           >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={onClose}
-                variant="inverse"
-                className="text-h3"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Button href="#contact" onClick={onClose} className="mt-4">
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={onClose}
+                  aria-current={isActive ? "page" : undefined}
+                  variant="inverse"
+                  className={cn("text-h3", isActive && "text-accent!")}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+            <Button href={ROUTES.contact} onClick={onClose} className="mt-4">
               Get a Consultation
             </Button>
           </nav>
