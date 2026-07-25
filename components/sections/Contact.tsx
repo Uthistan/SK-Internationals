@@ -94,7 +94,7 @@ const OFFICE_DETAILS = [
   {
     icon: MapPin,
     label: "Head office",
-    lines: ["Coimbatore — 641033"],
+    lines: ["Coimbatore 641033"],
   },
   {
     icon: MapPin,
@@ -104,7 +104,7 @@ const OFFICE_DETAILS = [
   {
     icon: Clock,
     label: "Working hours",
-    lines: ["Mon–Sat, 9:30am – 6:30pm IST"],
+    lines: ["Monday to Saturday, 9:30am to 6:30pm IST"],
   },
 ];
 
@@ -300,7 +300,7 @@ export function Contact() {
               </div>
               <p className="text-caption text-white/60">
                 Serving the Persian &amp; Arabian Gulf, Red Sea, and Indian
-                Sub-Continent lanes.
+                Subcontinent lanes.
               </p>
             </div>
           </div>

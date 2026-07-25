@@ -6,7 +6,7 @@ export interface FaqItem {
 export const FAQS: FaqItem[] = [
   {
     q: "I have never exported before. Can SK Internationals help me?",
-    a: "Yes. We guide first-time exporters through the complete process—from understanding export requirements and documentation to planning logistics and compliance.",
+    a: "Yes. We guide businesses exporting for the first time through the complete process, from understanding export requirements and documentation to planning logistics and compliance.",
   },
   {
     q: "Do I need an IEC before exporting?",

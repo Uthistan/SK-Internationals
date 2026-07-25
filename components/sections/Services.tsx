@@ -63,7 +63,7 @@ export function Services() {
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                 >
                   <p className="text-caption font-bold tracking-widest text-accent uppercase">
-                    {active.num} — {active.tag}
+                    {active.num} / {active.tag}
                   </p>
                   <Heading as="h2" size="h1" className="mt-3 max-w-2xl text-white">
                     {active.desc}

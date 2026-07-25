@@ -33,7 +33,7 @@ export const DESTINATION_GROUPS: DestinationGroup[] = [
     ],
   },
   {
-    region: "Indian Sub-Continent",
+    region: "Indian Subcontinent",
     destinations: [
       { value: "sri-lanka", label: "Sri Lanka" },
       { value: "bangladesh", label: "Bangladesh" },

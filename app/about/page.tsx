@@ -7,7 +7,7 @@ import { CTABand } from "@/components/sections/CTABand";
 import { ROUTES } from "@/components/layout/nav-links";
 
 const description =
-  "Established in 2011, SK Internationals is a logistics partner built on transparency and long-term relationships, led by a team with 20+ years of trade experience.";
+  "Established in 2011, SK Internationals is a logistics partner built on transparency and lasting relationships, led by a team with 20+ years of trade experience.";
 
 const HERO_IMAGE = "/hero-port.jpg";
 
@@ -29,7 +29,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="Who We Are"
         title="More Than Logistics. Your Partner in Growth."
-        lead="A decade of moving cargo for businesses that needed a partner who answers the phone — and answers it straight."
+        lead="A decade of moving cargo for businesses that needed a partner who answers the phone and answers it straight."
         image={HERO_IMAGE}
         breadcrumb="About"
         route={ROUTES.about}

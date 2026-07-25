@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   }
 
   if (!process.env.RESEND_API_KEY) {
-    console.error("RESEND_API_KEY is not set — cannot send enquiry email.");
+    console.error("RESEND_API_KEY is not set, so the enquiry email cannot be sent.");
     return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
   }
 
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         `Name: ${name}`,
         `Company: ${company}`,
         `Email: ${email}`,
-        `Phone: ${phone || "—"}`,
+        `Phone: ${phone || "Not provided"}`,
         `Destination / country of export: ${
           DESTINATION_LABELS[destination] ?? destination
         }`,

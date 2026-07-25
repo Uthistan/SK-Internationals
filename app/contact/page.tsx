@@ -27,7 +27,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Get in Touch"
         title="Have a Logistics Requirement or Planning Your Next Export?"
-        lead="Send us the shipment details you have. If something is still undecided, tell us that too — we will work from there."
+        lead="Send us the shipment details you have. If something is still undecided, tell us that too and we will work from there."
         image={HERO_IMAGE}
         breadcrumb="Contact"
         route={ROUTES.contact}

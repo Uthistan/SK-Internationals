@@ -44,13 +44,13 @@ export const INDUSTRIES: Industry[] = [
   },
   {
     name: "Retail & FMCG",
-    desc: "Reliable transportation for fast-moving consumer supply chains.",
+    desc: "Reliable transportation for consumer supply chains that move quickly.",
     image: "/images/industries/retail-fmcg.jpg",
     credit: "Adrian Sulyok on Unsplash",
     creditHref: "https://unsplash.com/@sulyok_imaging",
   },
   {
-    name: "Export-Focused SMEs",
+    name: "SMEs Built for Export",
     desc: "Helping growing businesses take their first step into global markets.",
     image: "/images/industries/export-smes.jpg",
     credit: "AFINIS Group on Unsplash",

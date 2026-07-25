@@ -26,11 +26,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SK Internationals — Global B2B Freight & Logistics",
-    template: "%s — SK Internationals",
+    default: "SK Internationals | Global B2B Freight & Logistics",
+    template: "%s | SK Internationals",
   },
   description:
-    "SK Internationals delivers reliable, transparent freight forwarding and logistics across the Gulf, Red Sea, and Indian Sub-Continent.",
+    "SK Internationals delivers reliable, transparent freight forwarding and logistics across the Gulf, Red Sea, and Indian Subcontinent.",
   alternates: { canonical: ROUTES.home },
   openGraph: {
     type: "website",
@@ -64,6 +64,9 @@ const organizationJsonLd = {
     email: ORGANIZATION.email,
     areaServed: "Worldwide",
   },
+  // Ties the site to the company's verified profile, so search engines resolve
+  // both to one entity rather than two.
+  sameAs: [ORGANIZATION.linkedin],
 };
 
 export default function RootLayout({

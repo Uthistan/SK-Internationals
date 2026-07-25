@@ -19,7 +19,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 const HERO_FEATURES = [
   { label: "Customer Focused", icon: Shield },
   { label: "Reliable Operations", icon: Zap },
-  { label: "End-to-End Logistics", icon: Globe },
+  { label: "Complete Logistics", icon: Globe },
 ];
 
 export function Hero() {
@@ -129,9 +129,9 @@ export function Hero() {
             <Heading
               as="h1"
               size="display"
-              className="max-w-6xl text-[clamp(1.35rem,6.8vw,2.75rem)]! text-white md:text-[2.5rem]! lg:text-[3.5rem]! xl:text-[4.25rem]!"
+              className="hero-headline max-w-6xl text-[clamp(1.35rem,6.8vw,2.75rem)]! text-white md:text-[2.5rem]! lg:text-[3.5rem]! xl:text-[4.25rem]!"
             >
-              <span className="block whitespace-nowrap text-accent">
+              <span className="hero-headline__accent block whitespace-nowrap text-accent">
                 Powering Businesses
               </span>
               <span className="block whitespace-nowrap">
@@ -142,9 +142,9 @@ export function Hero() {
 
           <div ref={subheadRef}>
             <Text as="p" size="body-lg" className="max-w-xl text-white/80!">
-              From domestic transportation to international export solutions, SK
-              Internationals delivers seamless logistics with reliability,
-              transparency, and a commitment to long-term partnerships.
+              From domestic transportation to international export, SK
+              Internationals moves cargo by sea, air, road, and rail, backed by
+              reliability, transparency, and partnerships built to last.
             </Text>
           </div>
 

@@ -7,10 +7,11 @@ import { Heading } from "@/components/ui/Heading";
 import { ROUTES } from "@/components/layout/nav-links";
 import { SERVICES } from "@/content/services";
 import {
-  FacebookIcon,
-  InstagramIcon,
   LinkedInIcon,
+  MailIcon,
+  WhatsAppIcon,
 } from "@/components/icons/SocialIcons";
+import { ORGANIZATION } from "@/lib/site";
 
 // Every service resolves to the same page until per-service routes exist —
 // listing them individually still tells a scanner what we actually do.
@@ -19,6 +20,16 @@ const SERVICE_LINKS = SERVICES.map((service) => ({
   href: ROUTES.services,
 }));
 
+// Rail moves as an integrated mode within our freight and cross border work
+// rather than a standalone service, so it is added here by hand and placed
+// beside the other transport modes a logistics buyer scans the footer for.
+const railInsertAt =
+  SERVICE_LINKS.findIndex((l) => l.label === "Cross Border Road Solutions") + 1;
+SERVICE_LINKS.splice(railInsertAt, 0, {
+  label: "Rail Cargo",
+  href: ROUTES.services,
+});
+
 const COMPANY_LINKS = [
   { label: "About", href: ROUTES.about },
   { label: "Industries", href: ROUTES.industries },
@@ -26,10 +37,27 @@ const COMPANY_LINKS = [
   { label: "Request a Quote", href: ROUTES.contact },
 ];
 
+// Two of the three open a conversation rather than a profile, so each carries
+// its own aria-label: the icon alone doesn't say who is being contacted.
 const SOCIAL_LINKS = [
-  { label: "LinkedIn", href: "#", icon: LinkedInIcon },
-  { label: "Facebook", href: "#", icon: FacebookIcon },
-  { label: "Instagram", href: "#", icon: InstagramIcon },
+  {
+    label: "SK Internationals on LinkedIn",
+    href: ORGANIZATION.linkedin,
+    icon: LinkedInIcon,
+    external: true,
+  },
+  {
+    label: `Email SK Internationals at ${ORGANIZATION.email}`,
+    href: `mailto:${ORGANIZATION.email}`,
+    icon: MailIcon,
+    external: false,
+  },
+  {
+    label: "Message SK Internationals on WhatsApp",
+    href: `https://wa.me/${ORGANIZATION.whatsapp}`,
+    icon: WhatsAppIcon,
+    external: true,
+  },
 ];
 
 export function Footer() {
@@ -53,11 +81,15 @@ export function Footer() {
             </Heading>
 
             <div className="flex items-center gap-3">
-              {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
+              {SOCIAL_LINKS.map(({ label, href, icon: Icon, external }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
+                  {...(external && {
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                  })}
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
                   <Icon className="h-4.5 w-4.5" />

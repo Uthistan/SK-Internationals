@@ -44,8 +44,12 @@ export interface NetworkRegion {
 // west coast to keep it clear of the Chennai and Tuticorin hub markers.
 export const NETWORK_REGIONS: NetworkRegion[] = [
   { name: "India", lat: 19.1, lon: 72.9 },
+  // Served overland rather than through a port, so each anchor is the country
+  // centre; far enough from the Chennai and Tuticorin markers not to crowd them.
+  { name: "Nepal", lat: 28.3, lon: 84.1 },
+  { name: "Bangladesh", lat: 23.8, lon: 90.4 },
   { name: "Middle East", lat: 24.5, lon: 54.4 },
-  { name: "United Kingdom", lat: 52.5, lon: -1.5 },
+  { name: "UK", lat: 52.5, lon: -1.5 },
   { name: "USA", lat: 39.8, lon: -98.5 },
   { name: "South East Asia", lat: 2.5, lon: 102.5 },
   { name: "Europe", lat: 48.5, lon: 11.5 },

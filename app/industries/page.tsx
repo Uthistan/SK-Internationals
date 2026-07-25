@@ -6,7 +6,7 @@ import { CTABand } from "@/components/sections/CTABand";
 import { ROUTES } from "@/components/layout/nav-links";
 
 const description =
-  "Logistics for manufacturing, food and beverage, agriculture, textiles, engineering, retail supply chains, and export-focused SMEs across domestic and global markets.";
+  "Logistics for manufacturing, food and beverage, agriculture, textiles, engineering, retail supply chains, and SMEs built for export across domestic and global markets.";
 
 const HERO_IMAGE = "/images/industries/manufacturing.jpg";
 
@@ -34,7 +34,10 @@ export default function IndustriesPage() {
         route={ROUTES.industries}
       />
       <Industries />
-      <CTABand />
+      {/* The Industries grid sits on bg-surface-alt, so the CTA starts a new
+          background band here and keeps its top padding rather than hugging the
+          seam. */}
+      <CTABand flushWithPrevious={false} />
     </>
   );
 }

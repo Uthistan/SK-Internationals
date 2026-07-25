@@ -35,7 +35,7 @@ export const EXPORT_ADVISORY: ExportAdvisoryItem[] = [
   },
   {
     title: "Government Incentives",
-    desc: "Understand export-related schemes like RoDTEP, EPCG, and MSME export support programs.",
+    desc: "Understand schemes for exporters like RoDTEP, EPCG, and MSME export support programs.",
   },
   {
     title: "Market Entry Support",

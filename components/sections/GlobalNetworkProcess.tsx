@@ -62,7 +62,7 @@ export function GlobalNetworkProcess() {
               <defs>
                 {/* One soft blur merged under the source. Applied to the route
                     group as a whole rather than per path, so the glow costs a
-                    single offscreen pass instead of nine. */}
+                    single offscreen pass instead of one per corridor. */}
                 <filter
                   id="route-glow"
                   filterUnits="userSpaceOnUse"
@@ -82,13 +82,12 @@ export function GlobalNetworkProcess() {
               <RouteTraces corridors={CORRIDORS} />
 
               {/* One marker per active region. Names are carried by the chips
-                  below rather than repeated on the map, which keeps nine
-                  labels from colliding across Europe and the Gulf. */}
+                  below rather than repeated on the map, which keeps the labels
+                  from colliding across Europe, the Gulf, and South Asia. */}
               {CORRIDORS.map((region, i) => (
                 <g key={region.name}>
                   {/* Each marker breathes on its own offset clock, so the set
-                      reads as nine live locations rather than one blinking
-                      grid. */}
+                      reads as live locations rather than one blinking grid. */}
                   <circle
                     cx={region.point.x}
                     cy={region.point.y}

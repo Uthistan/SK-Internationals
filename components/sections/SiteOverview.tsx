@@ -29,8 +29,8 @@ export function SiteOverview() {
             </Heading>
           </div>
           <Text as="p" color="secondary" className="max-w-sm md:pb-2">
-            Whatever brought you here — a lane to quote, a sector to serve, or a
-            partner to vet — the answer is two clicks away.
+            Whatever brought you here, whether a lane to quote, a sector to
+            serve, or a partner to vet, the answer is two clicks away.
           </Text>
         </div>
 

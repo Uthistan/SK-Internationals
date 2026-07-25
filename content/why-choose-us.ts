@@ -3,7 +3,8 @@ export const WHY_CHOOSE_US: string[] = [
   "Transparent Communication",
   "Experienced Professionals",
   "Reliable Execution",
-  "Long-Term Partnerships",
+  "Multimodal Reach by Sea, Air, Road, and Rail",
+  "Partnerships That Last",
   "Growing Global Trade Expertise",
 ];
 

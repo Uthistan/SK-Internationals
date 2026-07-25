@@ -273,6 +273,31 @@ summary {
   display: none;
 }
 
+/* --- Hero headline legibility ------------------------------------------- */
+
+/* The headline sits on moving footage, where luminance changes frame to frame
+   — the gradient scrim sets an average, not a floor, so a bright frame can
+   still wash the type out. Three stacked shadows hold it: a 1px dark offset
+   that carves the glyph edge (the embossed read), a tight blur that keeps
+   mid-tones off the letterform, and a wide low-opacity pool that lifts the
+   whole line off the video. Deliberately shadow-only — a solid plate behind
+   the type would hide the footage this hero is built around. */
+.hero-headline {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 10px rgba(0, 0, 0, 0.45),
+    0 10px 44px rgba(0, 0, 0, 0.35);
+}
+
+/* The accent line carries the brand orange, and a neutral halo greys #ea580c
+   at its edges. Same carve, but the outer glow is warm so the hue survives. */
+.hero-headline__accent {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 10px rgba(0, 0, 0, 0.4),
+    0 0 34px rgba(234, 88, 12, 0.5);
+}
+
 .bg-dot-pattern {
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
   background-size: 26px 26px;

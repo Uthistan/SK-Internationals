@@ -15,8 +15,8 @@ export const OVERVIEW_ENTRIES: OverviewEntry[] = [
   {
     num: "01",
     title: "What We Do",
-    desc: "Freight forwarding, customs clearance, warehousing, transportation, container handling, and export consultancy — coordinated by one team, on one shipment file.",
-    meta: "6 service lines",
+    desc: "Freight forwarding, customs clearance, warehousing, transportation, container handling, and export consultancy, all coordinated by one team on one shipment file.",
+    meta: "7 service lines",
     cue: "Explore our services",
     href: ROUTES.services,
     image: "/images/services/freight-forwarding.jpg",
@@ -33,7 +33,7 @@ export const OVERVIEW_ENTRIES: OverviewEntry[] = [
   {
     num: "03",
     title: "Who We Are",
-    desc: "Established in 2011 and run by a team carrying 20+ years of combined trade experience — built on transparency and long-term partnerships, not transactions.",
+    desc: "Established in 2011 and run by a team carrying 20+ years of combined trade experience, built on transparency and lasting partnerships rather than transactions.",
     meta: "Operating since 2011",
     cue: "Read our story",
     href: ROUTES.about,

@@ -64,7 +64,7 @@ export function Header() {
       <div className="relative mx-auto flex h-16 w-full max-w-full items-center justify-between px-4 md:h-20 md:max-w-180 md:px-6 lg:max-w-240 xl:max-w-300 xl:px-8 2xl:max-w-330">
         <NextLink
           href={ROUTES.home}
-          aria-label="SK Internationals — Home"
+          aria-label="SK Internationals Home"
           className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Image
@@ -73,7 +73,7 @@ export function Header() {
             width={320}
             height={182}
             priority
-            className="h-10 w-auto md:h-14"
+            className="h-14 w-auto md:h-14"
           />
         </NextLink>
 

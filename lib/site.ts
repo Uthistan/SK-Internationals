@@ -14,6 +14,9 @@ export const ORGANIZATION = {
   foundingDate: "2011",
   email: "saravanakumaar@skinternationals.in",
   telephone: "+91-88700-15754",
+  // wa.me accepts digits only: no plus sign, spaces, or separators.
+  whatsapp: "918870015754",
+  linkedin: "https://www.linkedin.com/company/skinternationals/",
   addressLocality: "Coimbatore",
   postalCode: "641033",
   addressRegion: "Tamil Nadu",
