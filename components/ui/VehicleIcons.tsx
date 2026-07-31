@@ -2,10 +2,25 @@ import type { SVGProps } from "react";
 
 type VehicleIconProps = SVGProps<SVGSVGElement>;
 
+/**
+ * Stroke weight is set against the 60-unit viewBox these are drawn on, not
+ * against a 24-unit one. Every caller renders them at `h-4` — a 0.27 scale —
+ * so a weight tuned for a 24-grid arrives at roughly a third of a pixel and
+ * the glyph disappears entirely.
+ *
+ * 4.4 is the weight that matches the Lucide icons sitting beside these in the
+ * hero feature row and the contact panel (1.75 on a 24-grid is the same 0.073
+ * share of the height). Rounded up to 4.5, which holds up better over video.
+ *
+ * The same constraint governs the drawings: at 16px tall, a shape narrower
+ * than about 12 units closes up into a blob, so each glyph carries the fewest
+ * parts that still name the vehicle — a container ship is a hull, two boxes,
+ * and a mast, and nothing is drawn that a visitor could not resolve.
+ */
 const strokeProps = {
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 1.5,
+  strokeWidth: 4.5,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
 };
@@ -14,9 +29,12 @@ export function PlaneIcon(props: VehicleIconProps) {
   return (
     <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
       <g {...strokeProps}>
-        <path d="M4 34 L96 34 L112 27 L96 20 L70 20 L48 4 L38 4 L50 20 L26 20 L16 10 L8 10 L14 22 L4 25 Z" />
-        <path d="M46 34 L40 46 L48 46 L54 34" />
-        <path d="M64 34 L60 44 L68 44 L72 34" />
+        {/* Side-view jet, nose right: fuselage with the tail fin at the rear,
+            and the near wing as its own shape below the body. The engine
+            nacelles the earlier drawing carried are gone — at 16px they sat
+            inside two pixels and only muddied the silhouette. */}
+        <path d="M10 40 H100 L114 33 L100 26 H34 L20 8 H12 L18 26 Z" />
+        <path d="M56 40 L46 54 H62 L72 40" />
       </g>
     </svg>
   );
@@ -26,12 +44,13 @@ export function ShipIcon(props: VehicleIconProps) {
   return (
     <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
       <g {...strokeProps}>
-        <path d="M6 40 L114 40 L104 52 L16 52 Z" />
-        <path d="M20 40 V26 H36 V40" />
-        <path d="M40 40 V22 H56 V40" />
-        <path d="M60 40 V26 H76 V40" />
-        <rect x="82" y="16" width="16" height="24" />
-        <path d="M90 16 V6" />
+        {/* Hull, two stacked containers, one mast. The third container and the
+            bridge box are dropped: five deck shapes across 100 units cannot be
+            told apart once the icon is 32px wide. */}
+        <path d="M8 36 H112 L100 52 H20 Z" />
+        <path d="M28 36 V22 H52 V36" />
+        <path d="M62 36 V14 H86 V36" />
+        <path d="M74 14 V6" />
       </g>
     </svg>
   );
@@ -41,11 +60,26 @@ export function TruckIcon(props: VehicleIconProps) {
   return (
     <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
       <g {...strokeProps}>
-        <rect x="6" y="14" width="70" height="26" />
-        <path d="M76 22 H98 L112 34 V40 H76 Z" />
-        <circle cx="28" cy="46" r="7" />
-        <circle cx="96" cy="46" r="7" />
-        <path d="M6 40 H14 M108 40 H112" />
+        <path d="M8 14 H70 V40 H8 Z" />
+        <path d="M70 22 H94 L110 36 V40 H70" />
+        <circle cx="30" cy="46" r="7" />
+        <circle cx="94" cy="46" r="7" />
+      </g>
+    </svg>
+  );
+}
+
+export function TrainIcon(props: VehicleIconProps) {
+  return (
+    <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
+      <g {...strokeProps}>
+        {/* A locomotive and one wagon. The track running under both is what
+            stops it reading as a bus at legend size; wheels are left off for
+            the same reason the ship lost its third container. */}
+        <path d="M10 12 H60 L76 28 V44 H10 Z" />
+        <path d="M24 20 H44 V32 H24 Z" />
+        <path d="M88 14 H114 V44 H88 Z" />
+        <path d="M4 52 H116" />
       </g>
     </svg>
   );

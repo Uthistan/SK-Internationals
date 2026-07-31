@@ -6,8 +6,13 @@ import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/components/layout/nav-links";
-import { EXPORT_ADVISORY, EXPORT_STEPS } from "@/content/export-advisory";
+import { EXPORT_STEPS } from "@/content/export-advisory";
 
+/**
+ * Home page teaser for the export consultancy offer. It shows the shape of the
+ * engagement and hands off — the eight advisory areas live on the page this
+ * links to rather than being repeated here.
+ */
 export function ExportEnablement() {
   return (
     <Section className="relative overflow-hidden">
@@ -48,19 +53,8 @@ export function ExportEnablement() {
           ))}
         </div>
 
-        <div className="mt-16 grid gap-x-12 gap-y-10 sm:grid-cols-2">
-          {EXPORT_ADVISORY.map((item) => (
-            <div key={item.title}>
-              <Heading as="h3" size="h3" className="text-white">
-                {item.title}
-              </Heading>
-              <p className="mt-2.5 text-body text-white/65">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <Button href={ROUTES.contact} className="mt-16">
-          Schedule an Export Consultation
+        <Button href={ROUTES.exportConsultancy} className="mt-16">
+          Explore Export Consultancy
         </Button>
       </Container>
     </Section>

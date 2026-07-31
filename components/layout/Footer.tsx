@@ -4,8 +4,9 @@ import { Container } from "@/components/layout/Container";
 import { Link } from "@/components/ui/Link";
 import { Text } from "@/components/ui/Text";
 import { Heading } from "@/components/ui/Heading";
-import { ROUTES } from "@/components/layout/nav-links";
-import { SERVICES } from "@/content/services";
+import { ROUTES, type InternalHref } from "@/components/layout/nav-links";
+import { SERVICE_PAGES } from "@/content/services";
+import { ALL_CITIES, CITY_SEPARATOR } from "@/content/network";
 import {
   LinkedInIcon,
   MailIcon,
@@ -13,16 +14,22 @@ import {
 } from "@/components/icons/SocialIcons";
 import { ORGANIZATION } from "@/lib/site";
 
-// Every service resolves to the same page until per-service routes exist —
-// listing them individually still tells a scanner what we actually do.
-const SERVICE_LINKS = SERVICES.map((service) => ({
+interface ServiceLink {
+  label: string;
+  href: InternalHref;
+}
+
+// Every service now has a page of its own, so the footer is a real index of the
+// section rather than fourteen links to the same URL.
+const SERVICE_LINKS: ServiceLink[] = SERVICE_PAGES.map((service) => ({
   label: service.title,
-  href: ROUTES.services,
+  href: service.href,
 }));
 
 // Rail moves as an integrated mode within our freight and cross border work
-// rather than a standalone service, so it is added here by hand and placed
-// beside the other transport modes a logistics buyer scans the footer for.
+// rather than a standalone service, so it has no page of its own — it is added
+// here by hand, pointing at the index, and placed beside the other transport
+// modes a logistics buyer scans the footer for.
 const railInsertAt =
   SERVICE_LINKS.findIndex((l) => l.label === "Cross Border Road Solutions") + 1;
 SERVICE_LINKS.splice(railInsertAt, 0, {
@@ -34,7 +41,7 @@ const COMPANY_LINKS = [
   { label: "About", href: ROUTES.about },
   { label: "Industries", href: ROUTES.industries },
   { label: "Contact", href: ROUTES.contact },
-  { label: "Request a Quote", href: ROUTES.contact },
+  { label: "Request a Quote", href: ROUTES.requestQuote },
 ];
 
 // Two of the three open a conversation rather than a profile, so each carries
@@ -66,17 +73,20 @@ export function Footer() {
   return (
     <footer className="bg-dot-pattern relative overflow-hidden bg-secondary">
       <Container>
-        <div className="grid gap-12 py-16 md:py-20 lg:grid-cols-[1.3fr_1fr_1fr] lg:gap-10">
-          <div className="flex flex-col items-start gap-6">
+        {/* Fifteen services in one column was most of the footer's height. Two
+            columns halve it, which is what lets the padding come down without
+            the block feeling crowded. */}
+        <div className="grid gap-10 py-12 md:py-14 lg:grid-cols-[1fr_1.6fr_0.7fr] lg:gap-12">
+          <div className="flex flex-col items-start gap-5">
             <Image
               src="/logo.png"
               alt="SK Internationals"
               width={256}
               height={146}
-              className="h-20 w-auto"
+              className="h-14 w-auto"
             />
 
-            <Heading as="h4" size="h3" className="max-w-sm text-white">
+            <Heading as="h4" size="h3" className="max-w-xs text-white">
               Powering Businesses Through Reliable Logistics
             </Heading>
 
@@ -96,10 +106,6 @@ export function Footer() {
                 </a>
               ))}
             </div>
-
-            <Text as="p" size="caption" className="text-white/40!">
-              © {year} SK Internationals. All rights reserved.
-            </Text>
           </div>
 
           <nav aria-label="Services">
@@ -110,10 +116,13 @@ export function Footer() {
             >
               Our Services
             </Text>
-            <ul className="mt-4 flex flex-col gap-2.5">
+            <ul className="mt-4 grid gap-x-8 gap-y-0.5 sm:grid-cols-2">
               {SERVICE_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-white/70! hover:text-accent!">
+                  <Link
+                    href={link.href}
+                    className="block border-b border-white/8 py-2 text-white/70! transition-colors hover:border-accent/40 hover:text-accent!"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -129,7 +138,7 @@ export function Footer() {
             >
               Quick Links
             </Text>
-            <ul className="mt-4 flex flex-col gap-2.5">
+            <ul className="mt-4 flex flex-col gap-2">
               {COMPANY_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-white/70! hover:text-accent!">
@@ -139,6 +148,19 @@ export function Footer() {
               ))}
             </ul>
           </nav>
+        </div>
+
+        {/* Moved out of the brand column into a rule of its own — these are the
+            two lines here that belong to the whole footer rather than to a
+            column. The cities lead: on a logistics site the footprint is the
+            last thing a buyer checks before they close the tab. */}
+        <div className="flex flex-col gap-2.5 border-t border-white/10 py-5 md:flex-row-reverse md:items-center md:justify-between md:gap-8">
+          <Text as="p" size="caption" className="text-white/55!">
+            {ALL_CITIES.join(CITY_SEPARATOR)}
+          </Text>
+          <Text as="p" size="caption" className="text-white/40!">
+            © {year} SK Internationals. All rights reserved.
+          </Text>
         </div>
       </Container>
     </footer>

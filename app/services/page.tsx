@@ -7,9 +7,9 @@ import { CTABand } from "@/components/sections/CTABand";
 import { ROUTES } from "@/components/layout/nav-links";
 
 const description =
-  "Freight forwarding, customs clearance, warehousing, transportation, container handling, and export consultancy, all coordinated by one team across global trade lanes.";
+  "Freight forwarding, customs clearance, warehousing, transportation, container handling, and trade compliance, all coordinated by one team across global trade lanes.";
 
-const HERO_IMAGE = "/images/services/container-handling.jpg";
+const HERO_IMAGE = "/images/heroes/services.jpg";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -29,7 +29,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="What We Do"
         title="Integrated Logistics & Trade Solutions"
-        lead="Seven service lines, one shipment file. Every stage stays with the same team, so nothing is handed off and lost."
+        lead="Fourteen service lines, one shipment file. Every stage stays with the same team, so nothing is handed off and lost."
         image={HERO_IMAGE}
         breadcrumb="Services"
         route={ROUTES.services}

@@ -63,7 +63,7 @@ export function CTABand({ flushWithPrevious = true }: CTABandProps) {
               Schedule a Consultation
             </Button>
             <Button
-              href={ROUTES.contact}
+              href={ROUTES.requestQuote}
               variant="secondary"
               className="border-accent! text-accent! hover:border-accent! hover:text-accent!"
             >

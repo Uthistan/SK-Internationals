@@ -23,7 +23,7 @@ export function WorldMap({ children, className }: WorldMapProps) {
     <svg
       viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
       role="img"
-      aria-label="World map marking the regions SK Internationals ships to, alongside its Chennai and Tuticorin hubs"
+      aria-label="World map of the regions SK Internationals ships to, showing sea corridors from the Chennai and Tuticorin ports, air corridors from the Delhi, Bengaluru, and Mumbai freight terminals, and road and rail corridors from Delhi across the land borders into Nepal and Bangladesh"
       className={cn("h-full w-full", className)}
     >
       <defs>

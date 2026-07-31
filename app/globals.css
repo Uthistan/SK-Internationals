@@ -113,6 +113,29 @@ summary {
   box-shadow: 0 8px 32px rgba(11, 37, 69, 0);
 }
 
+/* The submenu floats free of the header bar, so it carries its own glass rather
+   than inheriting it — and inverts it. The header's white glass works because
+   it sits against photography; this panel opens over the page body, which is
+   near-white, where white-on-white left it invisible. Dark glass separates from
+   the page on every route and matches the mobile overlay. */
+.nav-panel-glass {
+  background: rgba(11, 37, 69, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 24px 48px -20px rgba(11, 37, 69, 0.6),
+    0 2px 8px -2px rgba(11, 37, 69, 0.35);
+}
+
+/* Without backdrop-filter the blur silently does nothing, and 0.88 alpha would
+   leave page text legible through the panel. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-panel-glass {
+    background: var(--color-secondary);
+  }
+}
+
 .mobile-nav-glass {
   background: rgba(11, 37, 69, 0.999);
   backdrop-filter: blur(24px) saturate(180%);

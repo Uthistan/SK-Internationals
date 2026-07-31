@@ -1,9 +1,6 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { CircleCheck } from "lucide-react";
+import NextLink from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
@@ -11,125 +8,97 @@ import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/components/layout/nav-links";
-import { SERVICES } from "@/content/services";
-import { cn } from "@/lib/utils";
+import { SERVICE_PAGES, type ServicePage } from "@/content/services";
+import { DELIVERY_MODES } from "@/content/network";
 
+/**
+ * Reach is not a fourteenth service — it is the condition every one of them is
+ * sold under, so it opens the section rather than taking a card in the grid.
+ * The four modes are the first thing a buyer needs settled before they can
+ * price anything below.
+ */
+function GlobalReach() {
+  return (
+    <div className="mb-20 rounded-3xl border border-border bg-surface p-9 md:mb-24 md:p-14">
+      <div className="max-w-2xl">
+        <span className="text-caption font-semibold tracking-widest text-accent uppercase">
+          Global Reach
+        </span>
+        <Heading as="h2" size="h2" className="mt-5 text-text">
+          As Far as Your Cargo Needs to Go
+        </Heading>
+        <Text as="p" size="body-lg" color="secondary" className="mt-5">
+          A worldwide agent network moves your consignment by sea and air across
+          every leg you hand us, with on-time pickup at one end and on-time
+          delivery at the other.
+        </Text>
+      </div>
+
+      <dl className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+        {DELIVERY_MODES.map((mode) => (
+          <div key={mode.name} className="border-t border-border pt-4">
+            <dt className="text-body font-semibold text-text">{mode.name}</dt>
+            <dd className="mt-2 text-body text-text-secondary">{mode.desc}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
+
+function ServiceCard({ service }: { service: ServicePage }) {
+  return (
+    <NextLink
+      href={service.href}
+      className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+    >
+      <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl">
+        <Image
+          src={service.image}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      </div>
+      <div className="pt-5">
+        <p className="text-caption font-semibold tracking-widest text-accent uppercase">
+          {service.tag}
+        </p>
+        <Heading
+          as="h2"
+          size="h3"
+          className="mt-2.5 flex items-start gap-2 text-text transition-colors group-hover:text-primary"
+        >
+          {service.title}
+          <ArrowUpRight
+            aria-hidden="true"
+            size={18}
+            strokeWidth={2}
+            className="mt-1 shrink-0 text-border transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary"
+          />
+        </Heading>
+        <p className="mt-2 text-body text-text-secondary">{service.desc}</p>
+      </div>
+    </NextLink>
+  );
+}
+
+/**
+ * The services index. Each card opens the service's own page — the tab
+ * switcher this replaced could only ever show one service at a time, which hid
+ * thirteen of the fourteen from anyone scanning for the one they came for.
+ */
 export function Services() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const active = SERVICES[activeIndex];
-
   return (
     <Section id="services" className="bg-surface-alt">
       <Container>
-        {/* The headline lives in the page hero — this section opens straight
-            into the service the visitor is inspecting. */}
-        <div>
-          <div
-            id="service-detail-panel"
-            role="tabpanel"
-            className="relative h-120 overflow-hidden rounded-2xl sm:h-110 sm:rounded-3xl md:h-140"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active.title}
-                initial={{ opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={active.image}
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 100vw, 1200px"
-                  className="object-cover"
-                />
-              </motion.div>
-            </AnimatePresence>
+        <GlobalReach />
 
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-linear-to-t from-secondary/95 via-secondary/35 to-transparent"
-            />
-
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 md:p-14">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${active.title}-copy`}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                >
-                  <p className="text-caption font-bold tracking-widest text-accent uppercase">
-                    {active.num} / {active.tag}
-                  </p>
-                  <Heading as="h2" size="h1" className="mt-3 max-w-2xl text-white">
-                    {active.desc}
-                  </Heading>
-                  <Text
-                    as="p"
-                    size="body-lg"
-                    className="mt-3 line-clamp-4 max-w-xl text-white/80! sm:line-clamp-none"
-                  >
-                    {active.body}
-                  </Text>
-                  <Button href={ROUTES.contact} className="mt-6">
-                    Discuss This Service
-                  </Button>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div
-            role="tablist"
-            aria-label="Services"
-            className="mt-7 flex flex-wrap justify-center gap-2.5"
-          >
-            {SERVICES.map((service, i) => (
-              <button
-                key={service.title}
-                type="button"
-                role="tab"
-                aria-selected={i === activeIndex}
-                aria-controls="service-detail-panel"
-                onClick={() => setActiveIndex(i)}
-                className={cn(
-                  "rounded-full px-5 py-2.5 text-caption font-semibold tracking-wide transition-all duration-300",
-                  i === activeIndex
-                    ? "bg-primary text-white shadow-[0_8px_20px_-6px_rgba(234,88,12,0.5)]"
-                    : "border border-border bg-surface text-text-secondary hover:border-primary/40 hover:text-text",
-                )}
-              >
-                {service.title}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-16 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-            <AnimatePresence mode="wait">
-              {active.items.slice(0, 4).map((item, i) => (
-                <motion.div
-                  key={`${active.title}-${item}`}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                  className="border-t border-border pt-4"
-                >
-                  <CircleCheck
-                    aria-hidden="true"
-                    size={18}
-                    strokeWidth={1.75}
-                    className="text-accent"
-                  />
-                  <p className="mt-3 text-body font-medium text-text">{item}</p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {SERVICE_PAGES.map((service) => (
+            <ServiceCard key={service.href} service={service} />
+          ))}
         </div>
 
         <div className="mt-24 flex flex-col items-start gap-8 rounded-3xl bg-secondary p-9 md:flex-row md:items-center md:justify-between md:p-14">

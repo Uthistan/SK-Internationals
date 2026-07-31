@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-import { DESTINATION_LABELS } from "@/content/destinations";
-
+// Mirrors the client schema in components/sections/Contact.tsx. Duplicated
+// deliberately: the browser copy is a convenience, this one is the boundary.
+// Structured rate requests post to /api/quote instead — this endpoint only
+// carries the short "get in touch" note.
 const enquirySchema = z.object({
   name: z.string().min(2),
-  company: z.string().min(2),
   email: z.email(),
   phone: z.string().optional(),
-  destination: z.string().min(1),
   message: z.string().min(10),
 });
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
   }
 
-  const { name, company, email, phone, destination, message } = parsed.data;
+  const { name, email, phone, message } = parsed.data;
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -35,17 +35,13 @@ export async function POST(request: Request) {
       from: "SK Internationals Website <onboarding@resend.dev>",
       to: "uthistan666@gmail.com",
       replyTo: email,
-      subject: `New enquiry from ${company}`,
+      subject: `New enquiry from ${name}`,
       text: [
         `Name: ${name}`,
-        `Company: ${company}`,
         `Email: ${email}`,
         `Phone: ${phone || "Not provided"}`,
-        `Destination / country of export: ${
-          DESTINATION_LABELS[destination] ?? destination
-        }`,
         "",
-        "Shipment details:",
+        "Message:",
         message,
       ].join("\n"),
     });

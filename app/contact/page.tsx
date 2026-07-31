@@ -7,7 +7,7 @@ import { ROUTES } from "@/components/layout/nav-links";
 const description =
   "Tell us about your shipment or export plan. Reach the SK Internationals team by phone, email, or WhatsApp, or send an enquiry and we will respond with next steps.";
 
-const HERO_IMAGE = "/images/services/transportation.jpg";
+const HERO_IMAGE = "/images/heroes/contact.jpg";
 
 export const metadata: Metadata = {
   title: "Contact",

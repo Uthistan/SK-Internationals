@@ -10,7 +10,10 @@ export function WhyChooseSK() {
   return (
     <Section id="why-us" className="bg-background">
       <Container>
-        <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+        {/* Each claim now carries a line of proof, so the column is roughly twice
+            the height it was. The photograph sticks rather than centring against
+            it — centred, it floated in dead space beside the middle two rows. */}
+        <div className="grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div>
             <span className="text-caption font-semibold tracking-widest text-accent uppercase">
               Why SK Internationals
@@ -22,16 +25,23 @@ export function WhyChooseSK() {
             <ul className="mt-12 border-t border-border">
               {WHY_CHOOSE_US.map((item) => (
                 <li
-                  key={item}
-                  className="flex items-baseline gap-4 border-b border-border py-4.5"
+                  key={item.title}
+                  className="flex items-start gap-4 border-b border-border py-5"
                 >
                   <Check
                     aria-hidden="true"
                     size={16}
                     strokeWidth={2.5}
-                    className="shrink-0 translate-y-0.5 text-accent"
+                    className="mt-1.5 shrink-0 text-accent"
                   />
-                  <span className="text-body-lg text-text">{item}</span>
+                  <div>
+                    <p className="text-body-lg font-medium text-text">
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-body text-text-secondary">
+                      {item.desc}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -39,9 +49,9 @@ export function WhyChooseSK() {
 
           {/* Portrait crop so the photograph holds its own against the seven
               claims beside it, rather than floating as a spot illustration. */}
-          <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl lg:aspect-3/4">
+          <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl lg:sticky lg:top-32 lg:aspect-3/4">
             <Image
-              src="/images/services/warehousing.jpg"
+              src="/images/sections/why-choose-us.jpg"
               alt=""
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
@@ -54,10 +64,10 @@ export function WhyChooseSK() {
 
             <div className="absolute inset-x-5 bottom-5 border-t border-white/20 pt-4 md:inset-x-7 md:bottom-7">
               <p className="text-caption font-semibold tracking-widest text-accent uppercase">
-                Operational Bases
+                Operating Hours
               </p>
               <p className="mt-1.5 text-body font-medium text-white">
-                Chennai · Tuticorin
+                24x7 — because cargo doesn&rsquo;t wait
               </p>
             </div>
           </div>

@@ -50,7 +50,16 @@ export function Providers({ children }: ProvidersProps) {
   useEffect(() => {
     lenisRef.current?.scrollTo(0, { immediate: true });
     window.scrollTo(0, 0);
-    ScrollTrigger.refresh();
+
+    // Measured after the new route has painted, not in the same tick: until
+    // then the document still reports the outgoing page's height, and both
+    // Lenis and ScrollTrigger would cache a limit that belongs to a page the
+    // visitor has already left.
+    const frame = requestAnimationFrame(() => {
+      lenisRef.current?.resize();
+      ScrollTrigger.refresh();
+    });
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {

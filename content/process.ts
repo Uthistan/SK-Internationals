@@ -31,29 +31,3 @@ export const PROCESS_STEPS: ProcessStep[] = [
     desc: "As your business grows, we continue to support your logistics and international trade journey with scalable solutions and expert guidance.",
   },
 ];
-
-export interface NetworkRegion {
-  name: string;
-  /** Anchor point for the map marker — a representative centre, not a port. */
-  lat: number;
-  lon: number;
-}
-
-// One list drives both the map markers and the corridor chips beneath it, so
-// the two can never disagree about where we operate. India is anchored on the
-// west coast to keep it clear of the Chennai and Tuticorin hub markers.
-export const NETWORK_REGIONS: NetworkRegion[] = [
-  { name: "India", lat: 19.1, lon: 72.9 },
-  // Served overland rather than through a port, so each anchor is the country
-  // centre; far enough from the Chennai and Tuticorin markers not to crowd them.
-  { name: "Nepal", lat: 28.3, lon: 84.1 },
-  { name: "Bangladesh", lat: 23.8, lon: 90.4 },
-  { name: "Middle East", lat: 24.5, lon: 54.4 },
-  { name: "UK", lat: 52.5, lon: -1.5 },
-  { name: "USA", lat: 39.8, lon: -98.5 },
-  { name: "South East Asia", lat: 2.5, lon: 102.5 },
-  { name: "Europe", lat: 48.5, lon: 11.5 },
-  { name: "Africa", lat: 6, lon: 20 },
-  { name: "China", lat: 32, lon: 112 },
-  { name: "Australia", lat: -25, lon: 134 },
-];

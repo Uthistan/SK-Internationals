@@ -2,21 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { CORRIDOR_STYLE } from "@/lib/corridors";
 import { cn } from "@/lib/utils";
+
+import type { CorridorMode } from "@/content/network";
 
 export interface Corridor {
   name: string;
-  /** Arc from the port of loading to the region, in map user space. */
+  /** Arc from the gateway to the region, in map user space. */
   path: string;
+  /**
+   * Which network the corridor belongs to. Colour, weight, and the direction
+   * of the bow are what tell the four modes apart — a dash pattern is
+   * unavailable because `.route-line` already spends stroke-dasharray on the
+   * draw-on animation. See CORRIDOR_STYLE for the treatment per mode.
+   */
+  mode: CorridorMode;
 }
 
 interface RouteTracesProps {
   corridors: Corridor[];
 }
 
-// Offsets each route within the shared 4.5s cycle, so the nine draw in
-// sequence instead of sweeping the map in unison.
-const STAGGER_SECONDS = 0.25;
+// Offsets each route within the shared 4.5s cycle so they draw in sequence
+// rather than sweeping the map in unison. Kept small enough that the last
+// corridor still starts inside one cycle at the current corridor count.
+const STAGGER_SECONDS = 0.2;
 
 /**
  * Route overlay for the network map, drawn on when the map first comes into
@@ -56,28 +67,32 @@ export function RouteTraces({ corridors }: RouteTracesProps) {
     <g ref={groupRef} filter="url(#route-glow)">
       {corridors.map((corridor, index) => {
         const delay = `${index * STAGGER_SECONDS}s`;
+        const style = CORRIDOR_STYLE[corridor.mode];
 
         return (
-          <g key={corridor.name}>
+          <g key={`${corridor.mode}-${corridor.name}`}>
             <path
               d={corridor.path}
               pathLength={1}
               fill="none"
-              stroke="var(--color-route)"
-              strokeWidth="1"
+              stroke={style.stroke}
+              strokeWidth={style.width}
+              strokeOpacity={style.opacity}
               strokeLinecap="round"
               className={cn("route-line", hasEntered && "route-line--drawing")}
               style={hasEntered ? { animationDelay: delay } : undefined}
             />
 
             {/* Mounted only once drawing starts, so the light never sits
-                parked at the origin waiting for its cue. */}
+                parked at the origin waiting for its cue. Carries its own
+                corridor's colour, so a light on a land lane is never mistaken
+                for one on the sea lane crossing beneath it. */}
             {hasEntered && (
               <circle
-                r="2.2"
+                r={style.pulseRadius}
                 fill="var(--color-surface)"
-                stroke="var(--color-route)"
-                strokeWidth="1.2"
+                stroke={style.stroke}
+                strokeWidth="1"
                 className="route-pulse"
                 style={{
                   offsetPath: `path("${corridor.path}")`,

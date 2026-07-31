@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 
 import { PageHero } from "@/components/sections/PageHero";
 import { About } from "@/components/sections/About";
+import { Presence } from "@/components/sections/Presence";
 import { WhyChooseSK } from "@/components/sections/WhyChooseSK";
 import { CTABand } from "@/components/sections/CTABand";
 import { ROUTES } from "@/components/layout/nav-links";
 
 const description =
-  "Established in 2011, SK Internationals is a logistics partner built on transparency and lasting relationships, led by a team with 20+ years of trade experience.";
+  "Established in 2011, SK Internationals is a full-service EXIM and logistics partner with offices in six Indian cities, built on transparency and lasting relationships.";
 
-const HERO_IMAGE = "/hero-port.jpg";
+const HERO_IMAGE = "/images/heroes/about.jpg";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -35,6 +36,7 @@ export default function AboutPage() {
         route={ROUTES.about}
       />
       <About />
+      <Presence />
       <WhyChooseSK />
       <CTABand />
     </>

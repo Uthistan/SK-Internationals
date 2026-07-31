@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -5,8 +6,13 @@ import { ChevronRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
-import { ROUTES, type Route } from "@/components/layout/nav-links";
+import { ROUTES, type InternalHref } from "@/components/layout/nav-links";
 import { SITE_URL } from "@/lib/site";
+
+interface Crumb {
+  label: string;
+  href: InternalHref;
+}
 
 interface PageHeroProps {
   eyebrow: string;
@@ -15,7 +21,12 @@ interface PageHeroProps {
   image: string;
   /** Short label for the breadcrumb — the full title is usually too long. */
   breadcrumb: string;
-  route: Route;
+  route: InternalHref;
+  /**
+   * Intermediate crumb for a page nested under a section, so the trail reads
+   * Home › Services › This Page rather than skipping the section it lives in.
+   */
+  parent?: Crumb;
 }
 
 /**
@@ -30,15 +41,28 @@ export function PageHero({
   image,
   breadcrumb,
   route,
+  parent,
 }: PageHeroProps) {
+  // Everything ahead of the current page. The current page closes the trail as
+  // plain text, so it is appended separately rather than carried here.
+  const ancestors: Crumb[] = [
+    { label: "Home", href: ROUTES.home },
+    ...(parent ? [parent] : []),
+  ];
+
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      ...ancestors.map((crumb, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: crumb.label,
+        item: `${SITE_URL}${crumb.href === ROUTES.home ? "" : crumb.href}`,
+      })),
       {
         "@type": "ListItem",
-        position: 2,
+        position: ancestors.length + 1,
         name: breadcrumb,
         item: `${SITE_URL}${route}`,
       },
@@ -65,18 +89,25 @@ export function PageHero({
 
       <Container className="relative z-10">
         <nav aria-label="Breadcrumb">
-          <ol className="flex items-center gap-1.5">
-            <li>
-              <NextLink
-                href={ROUTES.home}
-                className="text-caption font-medium text-white/60 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                Home
-              </NextLink>
-            </li>
-            <li aria-hidden="true" className="flex items-center text-white/35">
-              <ChevronRight size={14} strokeWidth={2} />
-            </li>
+          <ol className="flex flex-wrap items-center gap-1.5">
+            {ancestors.map((crumb) => (
+              <Fragment key={crumb.href}>
+                <li>
+                  <NextLink
+                    href={crumb.href}
+                    className="text-caption font-medium text-white/60 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    {crumb.label}
+                  </NextLink>
+                </li>
+                <li
+                  aria-hidden="true"
+                  className="flex items-center text-white/35"
+                >
+                  <ChevronRight size={14} strokeWidth={2} />
+                </li>
+              </Fragment>
+            ))}
             <li>
               <span
                 aria-current="page"

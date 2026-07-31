@@ -75,11 +75,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // No fixed height on the root element. Lenis watches the document element
+    // with a ResizeObserver to recompute how far the page can scroll, and
+    // `h-full` pinned that box to the viewport — so the observer never fired as
+    // content grew and Lenis kept serving a stale scroll limit, which reads as
+    // the page jamming partway down. `min-h-dvh` on the body preserves the
+    // sticky-footer layout this was doing without freezing the measurement.
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} h-full antialiased`}
+      className={`${manrope.variable} ${inter.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-dvh flex-col">
         <Providers>
           <Preloader />
           <ScrollProgressBar />

@@ -8,7 +8,7 @@ import { ROUTES } from "@/components/layout/nav-links";
 const description =
   "Logistics for manufacturing, food and beverage, agriculture, textiles, engineering, retail supply chains, and SMEs built for export across domestic and global markets.";
 
-const HERO_IMAGE = "/images/industries/manufacturing.jpg";
+const HERO_IMAGE = "/images/heroes/industries.jpg";
 
 export const metadata: Metadata = {
   title: "Industries We Serve",

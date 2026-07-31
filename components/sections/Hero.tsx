@@ -1,25 +1,59 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, Globe, Shield, Zap } from "lucide-react";
+import { ChevronDown, Clock, MapPin } from "lucide-react";
 
 import { gsap } from "@/lib/gsap-config";
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
-import { HeroScene } from "@/components/sections/HeroScene";
 import { PRELOADER_HOLD_MS } from "@/components/layout/Preloader";
 import { ROUTES } from "@/components/layout/nav-links";
+import { OFFICE_CITY_COUNT } from "@/content/network";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { ButtonGroup } from "@/components/ui/ButtonGroup";
+import { PlaneIcon, ShipIcon } from "@/components/ui/VehicleIcons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { cn } from "@/lib/utils";
 
-const HERO_FEATURES = [
-  { label: "Customer Focused", icon: Shield },
-  { label: "Reliable Operations", icon: Zap },
-  { label: "Complete Logistics", icon: Globe },
+/**
+ * Two silhouettes at equal size, on one baseline. Against a port video, a lone
+ * "sea, air, road, rail" list loses — this states the pair as a mark instead of
+ * a sentence, which is what survives a two-second scan.
+ */
+function ModePair({ className }: FeatureIconProps) {
+  return (
+    <span aria-hidden="true" className={cn("flex items-center gap-2", className)}>
+      <ShipIcon className="h-4 w-auto" />
+      <span className="h-3.5 w-px bg-white/25" />
+      <PlaneIcon className="h-4 w-auto" />
+    </span>
+  );
+}
+
+/** One signature for the house pair and the Lucide glyphs, so the row renders uniformly. */
+interface FeatureIconProps {
+  className?: string;
+}
+
+/**
+ * Three facts, not three adjectives — a city count and an operating window are
+ * checkable, which is what earns the first 10 seconds. The mode pair leads,
+ * because it is the one thing the port footage actively argues against; the
+ * agent-network claim it replaced is already made twice further down the page.
+ */
+const HERO_FEATURES: { label: string; icon: (props: FeatureIconProps) => ReactNode }[] = [
+  { label: "Sea & Air Freight", icon: ModePair },
+  {
+    label: `${OFFICE_CITY_COUNT} City Offices in India`,
+    icon: (props) => <MapPin aria-hidden="true" strokeWidth={1.75} {...props} />,
+  },
+  {
+    label: "24x7 Operations Support",
+    icon: (props) => <Clock aria-hidden="true" strokeWidth={1.75} {...props} />,
+  },
 ];
 
 export function Hero() {
@@ -106,8 +140,6 @@ export function Hero() {
         className="absolute inset-0 bg-linear-to-t from-scrim/95 via-scrim/70 to-scrim/40"
       />
 
-      <HeroScene />
-
       <Container>
         <div
           ref={scopeRef}
@@ -142,9 +174,9 @@ export function Hero() {
 
           <div ref={subheadRef}>
             <Text as="p" size="body-lg" className="max-w-xl text-white/80!">
-              From domestic transportation to international export, SK
-              Internationals moves cargo by sea, air, road, and rail, backed by
-              reliability, transparency, and partnerships built to last.
+              Sea freight and air freight, run with equal weight by one team —
+              plus the road and rail legs either end. A 3PL and 4PL partner to
+              importers and exporters, door to door.
             </Text>
           </div>
 
@@ -167,12 +199,9 @@ export function Hero() {
           >
             {HERO_FEATURES.map(({ label, icon: Icon }) => (
               <div key={label} className="flex items-center gap-3">
-                <Icon
-                  aria-hidden="true"
-                  size={20}
-                  strokeWidth={1.75}
-                  className="shrink-0 text-accent"
-                />
+                {/* Every icon self-sizes off height so the house pair and the
+                    Lucide glyphs sit on one optical line. */}
+                <Icon className="h-5 w-auto shrink-0 text-accent" />
                 <p className="text-body font-medium text-white">{label}</p>
               </div>
             ))}

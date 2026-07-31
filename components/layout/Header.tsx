@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import { NavItem } from "@/components/layout/NavItem";
 import { NAV_LINKS, ROUTES } from "@/components/layout/nav-links";
 import { cn } from "@/lib/utils";
 
@@ -81,41 +82,21 @@ export function Header() {
           aria-label="Primary"
           className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex"
         >
-          {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
-
-            return (
-              <NextLink
-                key={link.href}
-                href={link.href}
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "group relative text-body font-medium whitespace-nowrap transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                  isOverScrim
-                    ? "text-white/90 hover:text-white"
-                    : "text-navbar-text/90 hover:text-navbar-text",
-                  isActive && (isOverScrim ? "text-white" : "text-navbar-text"),
-                )}
-              >
-                {link.label}
-                {/* The underline is permanent on the current route and grows on
-                    hover elsewhere — one affordance doing both jobs. */}
-                <span
-                  className={cn(
-                    "absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200",
-                    isActive ? "w-full" : "w-0 group-hover:w-full",
-                  )}
-                />
-              </NextLink>
-            );
-          })}
+          {NAV_LINKS.map((link) => (
+            <NavItem
+              key={link.href}
+              link={link}
+              isOverScrim={isOverScrim}
+              pathname={pathname}
+            />
+          ))}
         </nav>
 
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
-            <Button href={ROUTES.contact} className="rounded-full!">
+            <Button href={ROUTES.requestQuote} className="rounded-full!">
               <span className="inline-flex items-center gap-2">
-                Get a Consultation
+                Request Quote
                 <ArrowRight size={16} aria-hidden="true" />
               </span>
             </Button>
