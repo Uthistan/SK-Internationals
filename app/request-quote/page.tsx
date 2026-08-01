@@ -7,7 +7,10 @@ import { ROUTES } from "@/components/layout/nav-links";
 const description =
   "Tell us the mode, the lane, and the cargo. SK Internationals comes back with a written rate and transit time, usually within one business day.";
 
-const HERO_IMAGE = "/images/heroes/contact.jpg";
+// The port at loading, not the aircraft — /contact holds the air frame, and two
+// adjacent conversion pages opening on the same photograph read as one page the
+// visitor has already seen.
+const HERO_IMAGE = "/images/services/freight-forwarding.jpg";
 
 export const metadata: Metadata = {
   title: "Request a Quote",

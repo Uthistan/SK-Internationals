@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { CircleCheck, Loader2, MessageCircle } from "lucide-react";
 
@@ -13,10 +13,11 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { ButtonGroup } from "@/components/ui/ButtonGroup";
 import { Field, Select, inputClasses } from "@/components/ui/FormField";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Link } from "@/components/ui/Link";
 import { ROUTES } from "@/components/layout/nav-links";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { COUNTRY_GROUPS } from "@/content/countries";
+import { COUNTRY_OPTIONS } from "@/content/countries";
 import {
   CARGO_TYPES,
   MOVEMENT_TYPES,
@@ -29,8 +30,10 @@ import { cn } from "@/lib/utils";
 const quoteSchema = z.object({
   mode: z.string().min(1, "Choose how you would like to ship"),
   movement: z.string().min(1, "Choose a movement type"),
-  origin: z.string().min(1, "Select where the cargo ships from"),
-  destination: z.string().min(1, "Select where the cargo ships to"),
+  // Snake case, unlike the fields around them, because these two names are the
+  // agreed wire contract for the payload rather than a local convention.
+  origin_country: z.string().min(1, "Select where the cargo ships from"),
+  destination_country: z.string().min(1, "Select where the cargo ships to"),
   cargo: z.string().min(1, "Select what you are shipping"),
   quantity: z.string().min(1, "Tell us the approximate quantity"),
   purpose: z.string().min(1, "Choose commercial or personal"),
@@ -45,23 +48,6 @@ type QuoteFormValues = z.infer<typeof quoteSchema>;
 const WHATSAPP_HREF = `https://wa.me/${ORGANIZATION.whatsapp}?text=${encodeURIComponent(
   "Hi SK Internationals, I just requested a quote on your website.",
 )}`;
-
-/** Country options are identical at both ends — cross trade is a service we sell. */
-function CountryOptions() {
-  return (
-    <>
-      {COUNTRY_GROUPS.map((group) => (
-        <optgroup key={group.region} label={group.region}>
-          {group.countries.map((country) => (
-            <option key={country.value} value={country.value}>
-              {country.label}
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </>
-  );
-}
 
 /**
  * The structured quote request. Split into two groups — the shipment, then how
@@ -78,6 +64,7 @@ export function RequestQuote() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -86,8 +73,8 @@ export function RequestQuote() {
     defaultValues: {
       mode: "",
       movement: "",
-      origin: "",
-      destination: "",
+      origin_country: "",
+      destination_country: "",
       cargo: "",
       purpose: "",
     },
@@ -262,46 +249,64 @@ export function RequestQuote() {
                   </Select>
                 </Field>
 
+                {/* Both ends read from the same COUNTRY_OPTIONS — cross trade
+                    is a service we sell, so neither is pinned to India. */}
                 <Field
-                  id="origin"
+                  id="origin_country"
                   label="Where are you shipping from?"
                   required
-                  error={errors.origin?.message}
+                  error={errors.origin_country?.message}
                 >
-                  <Select
-                    id="origin"
-                    invalid={!!errors.origin}
-                    aria-describedby={errors.origin ? "origin-error" : undefined}
-                    defaultValue=""
-                    {...register("origin")}
-                  >
-                    <option value="" disabled>
-                      Select origin country
-                    </option>
-                    <CountryOptions />
-                  </Select>
+                  <Controller
+                    control={control}
+                    name="origin_country"
+                    render={({ field }) => (
+                      <SearchableSelect
+                        id="origin_country"
+                        options={COUNTRY_OPTIONS}
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        placeholder="Select origin country"
+                        required
+                        invalid={!!errors.origin_country}
+                        aria-describedby={
+                          errors.origin_country
+                            ? "origin_country-error"
+                            : undefined
+                        }
+                      />
+                    )}
+                  />
                 </Field>
 
                 <Field
-                  id="destination"
+                  id="destination_country"
                   label="Where are you shipping to?"
                   required
-                  error={errors.destination?.message}
+                  error={errors.destination_country?.message}
                 >
-                  <Select
-                    id="destination"
-                    invalid={!!errors.destination}
-                    aria-describedby={
-                      errors.destination ? "destination-error" : undefined
-                    }
-                    defaultValue=""
-                    {...register("destination")}
-                  >
-                    <option value="" disabled>
-                      Select destination country
-                    </option>
-                    <CountryOptions />
-                  </Select>
+                  <Controller
+                    control={control}
+                    name="destination_country"
+                    render={({ field }) => (
+                      <SearchableSelect
+                        id="destination_country"
+                        options={COUNTRY_OPTIONS}
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        placeholder="Select destination country"
+                        required
+                        invalid={!!errors.destination_country}
+                        aria-describedby={
+                          errors.destination_country
+                            ? "destination_country-error"
+                            : undefined
+                        }
+                      />
+                    )}
+                  />
                 </Field>
 
                 <Field

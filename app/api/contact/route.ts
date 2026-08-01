@@ -10,6 +10,11 @@ const enquirySchema = z.object({
   name: z.string().min(2),
   email: z.email(),
   phone: z.string().optional(),
+  company: z.string().optional(),
+  // Free text rather than an enum of service titles: the picker is built from
+  // the service pages, and a page renamed between deploys must not start
+  // rejecting live enquiries at the boundary.
+  service: z.string().optional(),
   message: z.string().min(10),
 });
 
@@ -26,7 +31,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to send enquiry" }, { status: 502 });
   }
 
-  const { name, email, phone, message } = parsed.data;
+  const { name, email, phone, company, service, message } = parsed.data;
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -35,11 +40,17 @@ export async function POST(request: Request) {
       from: "SK Internationals Website <onboarding@resend.dev>",
       to: "uthistan666@gmail.com",
       replyTo: email,
-      subject: `New enquiry from ${name}`,
+      // Company rides in the subject because that is what the desk triages on
+      // before opening anything.
+      subject: company
+        ? `New enquiry from ${name} (${company})`
+        : `New enquiry from ${name}`,
       text: [
         `Name: ${name}`,
+        `Company: ${company || "Not provided"}`,
         `Email: ${email}`,
         `Phone: ${phone || "Not provided"}`,
+        `Service required: ${service || "Not sure yet — advise me"}`,
         "",
         "Message:",
         message,

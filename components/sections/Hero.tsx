@@ -157,7 +157,13 @@ export function Hero() {
                 — a viewport-only formula overflows just below each step.
                 Below md the vw term leads so the headline fills the phone
                 screen; its ceiling is set by "Through Reliable Logistics"
-                staying on one line inside the 16px gutters. */}
+                staying on one line inside the 16px gutters.
+
+                That ceiling is the whole size budget on a phone: at 26
+                characters the line hits the gutter at 6.8vw, so the headline
+                cannot be set larger without either wrapping to a third line or
+                pushing the body sideways. Raising it is a copy decision — a
+                shorter second line — not a CSS one. */}
             <Heading
               as="h1"
               size="display"

@@ -7,6 +7,8 @@ import { Heading } from "@/components/ui/Heading";
 import { ROUTES, type InternalHref } from "@/components/layout/nav-links";
 import { SERVICE_PAGES } from "@/content/services";
 import { ALL_CITIES, CITY_SEPARATOR } from "@/content/network";
+import { CONTACT_DESKS } from "@/content/contacts";
+import { telHref } from "@/lib/utils";
 import {
   LinkedInIcon,
   MailIcon,
@@ -37,8 +39,13 @@ SERVICE_LINKS.splice(railInsertAt, 0, {
   href: ROUTES.services,
 });
 
+// Nav order, so the footer reads the way the header does. Services is the index
+// the column beside this one bypasses — fourteen deep links and no way back to
+// the page that frames them was the gap. Request a Quote closes the list as the
+// only action among the destinations.
 const COMPANY_LINKS = [
   { label: "About", href: ROUTES.about },
+  { label: "Services", href: ROUTES.services },
   { label: "Industries", href: ROUTES.industries },
   { label: "Contact", href: ROUTES.contact },
   { label: "Request a Quote", href: ROUTES.requestQuote },
@@ -83,12 +90,54 @@ export function Footer() {
               alt="SK Internationals"
               width={256}
               height={146}
-              className="h-14 w-auto"
+              className="h-20 w-auto"
             />
 
             <Heading as="h4" size="h3" className="max-w-xs text-white">
               Powering Businesses Through Reliable Logistics
             </Heading>
+
+            {/* The same desks the contact page lists, carried here so the last
+                thing on every page answers "who do I call" without another
+                navigation. Desk names sit below the accent column headings in
+                weight — they label a group inside this column, not a column.
+
+                Set one step under the caption token, which is the only place on
+                the site that happens: this is a reference block in the footer,
+                read when someone already knows what they are looking for, and
+                at caption size it competed with the two nav columns beside it. */}
+            <div className="flex w-full flex-col gap-3.5">
+              {CONTACT_DESKS.map(({ label, contacts }) => (
+                <div key={label}>
+                  <p className="text-[11px] leading-4 font-semibold tracking-widest text-white/45 uppercase">
+                    {label}
+                  </p>
+                  <ul className="mt-1.5 flex flex-col gap-0.5">
+                    {contacts.map(({ email, phone }) => (
+                      <li
+                        key={email}
+                        className="flex flex-wrap items-baseline gap-x-3"
+                      >
+                        <a
+                          href={`mailto:${email}`}
+                          className="text-[13px] leading-5 wrap-break-word text-white/75 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        >
+                          {email}
+                        </a>
+                        {phone && (
+                          <a
+                            href={telHref(phone)}
+                            className="text-[13px] leading-5 whitespace-nowrap tabular-nums text-white/50 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                          >
+                            {phone}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
 
             <div className="flex items-center gap-3">
               {SOCIAL_LINKS.map(({ label, href, icon: Icon, external }) => (

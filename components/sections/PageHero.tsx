@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
-import { ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
@@ -27,6 +27,12 @@ interface PageHeroProps {
    * Home › Services › This Page rather than skipping the section it lives in.
    */
   parent?: Crumb;
+  /**
+   * Short assurances shown beneath the lead — the answer to "what happens after
+   * I write to you", which on a contact page is the question that decides
+   * whether anyone writes at all. Facts only: each one must be verifiable.
+   */
+  assurances?: string[];
 }
 
 /**
@@ -42,6 +48,7 @@ export function PageHero({
   breadcrumb,
   route,
   parent,
+  assurances,
 }: PageHeroProps) {
   // Everything ahead of the current page. The current page closes the trail as
   // plain text, so it is appended separately rather than carried here.
@@ -128,6 +135,28 @@ export function PageHero({
         <Text as="p" size="body-lg" className="mt-5 max-w-xl text-white/80!">
           {lead}
         </Text>
+
+        {/* Hairline pills rather than filled chips: on the hero these sit over
+            photography, and a filled badge there reads as a banner ad. The tick
+            is decorative — the sentence beside it carries the meaning. */}
+        {assurances && assurances.length > 0 && (
+          <ul className="mt-7 flex flex-wrap items-center gap-2.5">
+            {assurances.map((assurance) => (
+              <li
+                key={assurance}
+                className="flex items-center gap-2 rounded-full border border-white/20 bg-white/8 py-2 pr-4 pl-3 text-caption font-medium text-white/85 backdrop-blur-sm"
+              >
+                <Check
+                  aria-hidden="true"
+                  size={15}
+                  strokeWidth={2.5}
+                  className="shrink-0 text-accent"
+                />
+                {assurance}
+              </li>
+            ))}
+          </ul>
+        )}
       </Container>
 
       <script

@@ -11,8 +11,11 @@ import { QUOTE_LABELS } from "@/content/quote";
 const quoteSchema = z.object({
   mode: z.string().min(1),
   movement: z.string().min(1),
-  origin: z.string().min(1),
-  destination: z.string().min(1),
+  // ISO 3166-1 alpha-2. Kept as a loose string, like `service` on the enquiry
+  // route: the label lookup falls back to the raw code, so a country the
+  // dataset renames is still delivered rather than rejected at the boundary.
+  origin_country: z.string().min(1),
+  destination_country: z.string().min(1),
   cargo: z.string().min(1),
   quantity: z.string().min(1),
   purpose: z.string().min(1),
@@ -42,8 +45,8 @@ export async function POST(request: Request) {
   const {
     mode,
     movement,
-    origin,
-    destination,
+    origin_country,
+    destination_country,
     cargo,
     quantity,
     purpose,
@@ -53,7 +56,7 @@ export async function POST(request: Request) {
     message,
   } = parsed.data;
 
-  const lane = `${label(COUNTRY_LABELS, origin)} → ${label(COUNTRY_LABELS, destination)}`;
+  const lane = `${label(COUNTRY_LABELS, origin_country)} → ${label(COUNTRY_LABELS, destination_country)}`;
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);

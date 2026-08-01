@@ -1,127 +1,38 @@
-export interface Country {
+import { Country } from "country-state-city";
+
+export interface CountryOption {
+  /** ISO 3166-1 alpha-2 — the value the form stores and posts. */
   value: string;
+  /** Flag and name, the only things an option shows. */
   label: string;
-}
-
-export interface CountryGroup {
-  region: string;
-  countries: Country[];
+  /** Name alone: what search matches, and what the notification email prints. */
+  name: string;
 }
 
 /**
- * Origin and destination options for the quote form. Grouped by the corridors
- * in `content/network.ts` so the picker reads in the same geography the map
- * draws, with India first because it is one end of nearly every shipment we
- * quote. Cross trade is a service we sell, so origin is not pinned to India.
+ * Every country, flag and name only, sorted by name.
+ *
+ * Derived from `country-state-city` rather than kept by hand so the list cannot
+ * drift, and built once at module scope rather than per render. Origin and
+ * destination read from this same constant — cross trade is a service we sell,
+ * so neither end is pinned to India.
+ *
+ * The collation is pinned to `en` because this module is evaluated on the
+ * server and again in the browser; an ambient locale would let the two orders
+ * disagree and hydration would mismatch.
  */
-export const COUNTRY_GROUPS: CountryGroup[] = [
-  {
-    region: "India",
-    countries: [{ value: "india", label: "India" }],
-  },
-  {
-    region: "Persian & Arabian Gulf",
-    countries: [
-      { value: "uae", label: "United Arab Emirates" },
-      { value: "saudi-arabia", label: "Saudi Arabia" },
-      { value: "oman", label: "Oman" },
-      { value: "qatar", label: "Qatar" },
-      { value: "kuwait", label: "Kuwait" },
-      { value: "bahrain", label: "Bahrain" },
-    ],
-  },
-  {
-    region: "Red Sea",
-    countries: [
-      { value: "egypt", label: "Egypt" },
-      { value: "sudan", label: "Sudan" },
-      { value: "djibouti", label: "Djibouti" },
-      { value: "jordan", label: "Jordan" },
-      { value: "yemen", label: "Yemen" },
-    ],
-  },
-  {
-    region: "Indian Subcontinent",
-    countries: [
-      { value: "sri-lanka", label: "Sri Lanka" },
-      { value: "bangladesh", label: "Bangladesh" },
-      { value: "nepal", label: "Nepal" },
-      { value: "maldives", label: "Maldives" },
-      { value: "pakistan", label: "Pakistan" },
-    ],
-  },
-  {
-    region: "South East Asia",
-    countries: [
-      { value: "singapore", label: "Singapore" },
-      { value: "malaysia", label: "Malaysia" },
-      { value: "indonesia", label: "Indonesia" },
-      { value: "thailand", label: "Thailand" },
-      { value: "vietnam", label: "Vietnam" },
-      { value: "philippines", label: "Philippines" },
-    ],
-  },
-  {
-    region: "East Asia",
-    countries: [
-      { value: "china", label: "China" },
-      { value: "hong-kong", label: "Hong Kong" },
-      { value: "japan", label: "Japan" },
-      { value: "south-korea", label: "South Korea" },
-      { value: "taiwan", label: "Taiwan" },
-    ],
-  },
-  {
-    region: "Europe & UK",
-    countries: [
-      { value: "united-kingdom", label: "United Kingdom" },
-      { value: "germany", label: "Germany" },
-      { value: "netherlands", label: "Netherlands" },
-      { value: "belgium", label: "Belgium" },
-      { value: "france", label: "France" },
-      { value: "italy", label: "Italy" },
-      { value: "spain", label: "Spain" },
-      { value: "poland", label: "Poland" },
-    ],
-  },
-  {
-    region: "Americas",
-    countries: [
-      { value: "united-states", label: "United States" },
-      { value: "canada", label: "Canada" },
-      { value: "mexico", label: "Mexico" },
-      { value: "brazil", label: "Brazil" },
-    ],
-  },
-  {
-    region: "Africa",
-    countries: [
-      { value: "kenya", label: "Kenya" },
-      { value: "tanzania", label: "Tanzania" },
-      { value: "south-africa", label: "South Africa" },
-      { value: "nigeria", label: "Nigeria" },
-      { value: "ethiopia", label: "Ethiopia" },
-    ],
-  },
-  {
-    region: "Oceania",
-    countries: [
-      { value: "australia", label: "Australia" },
-      { value: "new-zealand", label: "New Zealand" },
-    ],
-  },
-  {
-    region: "Other",
-    countries: [{ value: "other", label: "Other / not listed" }],
-  },
-];
+export const COUNTRY_OPTIONS: CountryOption[] = Country.getAllCountries()
+  .map(({ isoCode, name, flag }) => ({
+    value: isoCode,
+    label: `${flag} ${name}`,
+    name,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name, "en"));
 
 /**
- * Value to label, so the notification email names the country rather than
- * repeating the slug the form posted.
+ * ISO code to plain name, so the notification email names the country rather
+ * than repeating the code the form posted.
  */
 export const COUNTRY_LABELS: Record<string, string> = Object.fromEntries(
-  COUNTRY_GROUPS.flatMap((group) =>
-    group.countries.map(({ value, label }) => [value, label]),
-  ),
+  COUNTRY_OPTIONS.map(({ value, name }) => [value, name]),
 );

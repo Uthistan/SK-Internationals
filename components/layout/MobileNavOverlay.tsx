@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import NextLink from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
@@ -71,7 +73,26 @@ export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
           transition={{ duration: 0.2 }}
           className="mobile-nav-glass fixed inset-0 z-40 flex flex-col md:hidden"
         >
-          <div className="flex justify-end p-4">
+          {/* Mirrors the header bar it covers — same height, same gutter, same
+              logo size — so nothing shifts under the finger that opened the
+              menu. The overlay paints over the real header, which is why the
+              mark has to be repeated here rather than left showing through. */}
+          <div className="flex h-16 items-center justify-between px-4">
+            <NextLink
+              href={ROUTES.home}
+              onClick={onClose}
+              aria-label="SK Internationals Home"
+              className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <Image
+                src="/logo.png"
+                alt=""
+                width={320}
+                height={182}
+                className="h-14 w-auto"
+              />
+            </NextLink>
+
             <button
               type="button"
               onClick={onClose}
