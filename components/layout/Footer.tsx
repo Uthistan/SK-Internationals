@@ -86,11 +86,11 @@ export function Footer() {
         <div className="grid gap-10 py-12 md:py-14 lg:grid-cols-[1fr_1.6fr_0.7fr] lg:gap-12">
           <div className="flex flex-col items-start gap-5">
             <Image
-              src="/logo.png"
+              src="/logo-header.png"
               alt="SK Internationals"
               width={256}
               height={146}
-              className="h-20 w-auto"
+              className="h-20 w-40 md:h-22"
             />
 
             <Heading as="h4" size="h3" className="max-w-xs text-white">
@@ -190,7 +190,10 @@ export function Footer() {
             <ul className="mt-4 flex flex-col gap-2">
               {COMPANY_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-white/70! hover:text-accent!">
+                  <Link
+                    href={link.href}
+                    className="text-white/70! hover:text-accent!"
+                  >
                     {link.label}
                   </Link>
                 </li>

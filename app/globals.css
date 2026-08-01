@@ -56,7 +56,7 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-geist);
+  --font-heading: var(--font-inter);
   --font-body: var(--font-inter);
 }
 

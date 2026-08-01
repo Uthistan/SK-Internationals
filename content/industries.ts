@@ -56,8 +56,8 @@ export const INDUSTRIES: Industry[] = [
     creditHref: "https://unsplash.com/@abject",
   },
   {
-    name: "BigBulk Goods",
-    desc: "Break bulk, over dimensional, and project cargo moved on the equipment it needs.",
+    name: "Project Cargo",
+    desc: "Safe and efficient transportation of oversized, over-dimensional, and heavy equipment through specialized logistics solutions.",
     image: "/images/industries/bigbulk-goods.jpg",
     credit: "Julia Taubitz on Unsplash",
     creditHref: "https://unsplash.com/@justmejuliee",

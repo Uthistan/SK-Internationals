@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { Providers } from "@/components/layout/Providers";
 import { Preloader } from "@/components/layout/Preloader";
@@ -11,16 +11,10 @@ import { ROUTES } from "@/components/layout/nav-links";
 import { ORGANIZATION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["600", "700"],
-});
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -83,7 +77,7 @@ export default function RootLayout({
     // sticky-footer layout this was doing without freezing the measurement.
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} antialiased`}
+      className={`${inter.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col">
         <Providers>
