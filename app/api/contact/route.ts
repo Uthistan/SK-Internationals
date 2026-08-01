@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         `Company: ${company || "Not provided"}`,
         `Email: ${email}`,
         `Phone: ${phone || "Not provided"}`,
-        `Service required: ${service || "Not sure yet — advise me"}`,
+        `Service required: ${service || "Not sure yet, advise me"}`,
         "",
         "Message:",
         message,

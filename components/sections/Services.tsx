@@ -29,7 +29,7 @@ function GlobalReach() {
         </Heading>
         <Text as="p" size="body-lg" color="secondary" className="mt-5">
           A worldwide agent network moves your consignment by sea and air across
-          every leg you hand us, with on-time pickup at one end and on-time
+          every leg you hand us, with on time pickup at one end and on time
           delivery at the other.
         </Text>
       </div>

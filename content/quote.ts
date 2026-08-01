@@ -18,7 +18,7 @@ export const SHIPPING_MODES: QuoteOption[] = [
   { value: "multimodal", label: "Multimodal (combination)" },
   // Namespaced, because movement type offers its own "not sure" and the
   // notification email resolves both through one label map.
-  { value: "mode-not-sure", label: "Not sure — advise me" },
+  { value: "mode-not-sure", label: "Not sure, advise me" },
 ];
 
 // Mirrors DELIVERY_MODES in content/network.ts, which is what the services page
@@ -29,7 +29,7 @@ export const MOVEMENT_TYPES: QuoteOption[] = [
   { value: "port-to-port", label: "Port to Port" },
   { value: "port-to-door", label: "Port to Door" },
   { value: "door-to-port", label: "Door to Port" },
-  { value: "movement-not-sure", label: "Not sure — advise me" },
+  { value: "movement-not-sure", label: "Not sure, advise me" },
 ];
 
 export const CARGO_TYPES: QuoteOption[] = [

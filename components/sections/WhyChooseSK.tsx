@@ -67,7 +67,7 @@ export function WhyChooseSK() {
                 Operating Hours
               </p>
               <p className="mt-1.5 text-body font-medium text-white">
-                24x7 — because cargo doesn&rsquo;t wait
+                24x7, because cargo doesn&rsquo;t wait
               </p>
             </div>
           </div>

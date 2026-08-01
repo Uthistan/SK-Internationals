@@ -8,7 +8,7 @@ import { CTABand } from "@/components/sections/CTABand";
 import { ROUTES } from "@/components/layout/nav-links";
 
 const description =
-  "Established in 2011, SK Internationals is a full-service EXIM and logistics partner with offices in six Indian cities, built on transparency and lasting relationships.";
+  "Established in 2011, SK Internationals is a full service EXIM and logistics partner with offices in six Indian cities, built on transparency and lasting relationships.";
 
 const HERO_IMAGE = "/images/heroes/about.jpg";
 

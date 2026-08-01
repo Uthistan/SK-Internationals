@@ -17,7 +17,7 @@ export function Presence() {
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <div className="lg:sticky lg:top-32 lg:self-start">
             <span className="text-caption font-semibold tracking-widest text-accent uppercase">
-              Pan-India Presence
+              Pan India Presence
             </span>
             <Heading as="h2" size="h1" className="mt-5 max-w-sm text-text">
               Local Teams Where Your Cargo Is

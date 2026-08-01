@@ -62,11 +62,12 @@ export function SiteOverview() {
                   </span>
                 </div>
 
-                {/* Photography stays out of the resting state so the list reads
-                    as an index; it arrives only on intent. */}
+                {/* Each route carries its photograph in the resting state, so
+                    the three paths are told apart at a glance rather than on
+                    intent. Decorative: the heading beside it names the route. */}
                 <div
                   aria-hidden="true"
-                  className="hidden h-24 w-40 shrink-0 translate-x-4 overflow-hidden rounded-xl opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:opacity-100 lg:block"
+                  className="hidden h-24 w-40 shrink-0 overflow-hidden rounded-xl lg:block"
                 >
                   <Image
                     src={entry.image}

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
+import { Button, HEADER_CTA_CLASSES } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { isRouteActive, NAV_LINKS, ROUTES } from "@/components/layout/nav-links";
@@ -85,11 +85,11 @@ export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
               className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <Image
-                src="/logo.png"
+                src="/logo-header.png"
                 alt=""
                 width={320}
                 height={182}
-                className="h-14 w-auto"
+                className="h-22 w-40"
               />
             </NextLink>
 
@@ -199,7 +199,7 @@ export function MobileNavOverlay({ isOpen, onClose }: MobileNavOverlayProps) {
               <Button
                 href={ROUTES.requestQuote}
                 onClick={onClose}
-                className="mt-4"
+                className={cn("mt-4", HEADER_CTA_CLASSES)}
               >
                 Request a Quote
               </Button>

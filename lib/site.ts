@@ -16,7 +16,7 @@ export const ORGANIZATION = {
   legalName: "SK Internationals",
   foundingDate: "2011",
   email: "saravanakumaar@skinternationals.in",
-  telephone: "+91-88700-15754",
+  telephone: "+91 88700 15754",
   streetAddress:
     "SMS Complex, No. 10, 1st Floor, Rani Garden, Opposite Jayendra Saraswathy College, Singanallur",
   // wa.me accepts digits only: no plus sign, spaces, or separators.
@@ -28,8 +28,12 @@ export const ORGANIZATION = {
   addressCountry: "IN",
 } as const;
 
-/** The general line, in the two forms every caller-facing surface needs. */
-export const PHONE_DISPLAY = ORGANIZATION.telephone.replace(/-/g, " ");
+/**
+ * The general line, in the two forms every caller-facing surface needs. Stored
+ * spaced as it is read aloud, matching the desk numbers in `content/contacts.ts`;
+ * `telHref` strips the separators on its way to the dialler.
+ */
+export const PHONE_DISPLAY = ORGANIZATION.telephone;
 export const PHONE_HREF = telHref(ORGANIZATION.telephone);
 
 /**
@@ -51,7 +55,7 @@ export const WHATSAPP_HREF = whatsappHref(
 export const OFFICE_ADDRESS_LINES = [
   "SMS Complex, No. 10, 1st Floor",
   "Rani Garden, Opposite Jayendra Saraswathy College",
-  "Singanallur, Coimbatore – 641033",
+  "Singanallur, Coimbatore 641033",
   "Tamil Nadu, India",
 ];
 

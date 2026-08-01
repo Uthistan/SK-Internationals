@@ -23,7 +23,7 @@ export const SERVICES: ServiceItem[] = [
     slug: "freight-forwarding",
     title: "Freight Forwarding",
     desc: "Seamless Freight Forwarding Across Domestic & International Markets",
-    body: "Efficient freight forwarding is the foundation of a successful supply chain. We coordinate the movement of cargo across sea, air, road, and rail through trusted transportation networks, choosing the mode that suits your cargo, destination, transit time, and budget. As a 3PL and 4PL operator we can run the whole chain or slot into the part you need, with on-time pickup at origin and on-time delivery at destination.",
+    body: "Efficient freight forwarding is the foundation of a successful supply chain. We coordinate the movement of cargo across sea, air, road, and rail through trusted transportation networks, choosing the mode that suits your cargo, destination, transit time, and budget. As a 3PL and 4PL operator we can run the whole chain or slot into the part you need, with on time pickup at origin and on time delivery at destination.",
     items: [
       "Ocean Freight (FCL / LCL)",
       "Air Freight",
@@ -39,7 +39,7 @@ export const SERVICES: ServiceItem[] = [
       "Buyers Consolidation",
       "Cargo Consolidation",
       "Dangerous Goods (DG) Cargo Handling",
-      "Special & Odd-Dimension Cargo Handling",
+      "Special & Odd Dimension Cargo Handling",
       "Purchase Order Management",
       "Vendor Coordination",
       "Shipment Planning",
@@ -185,7 +185,7 @@ export const SERVICES: ServiceItem[] = [
     slug: "sea-air-courier",
     title: "Sea / Air Courier",
     desc: "Documents and Small Consignments, on the Fastest Leg That Suits Them",
-    body: "Not every shipment fills a container. Export documents, product samples, spare parts, and small parcels move on their own clock, and putting them on a full freight booking costs time you do not have. We run them as courier consignments — by air when the deadline is short, consolidated by sea when the cost matters more than the day — collected at your door and delivered to your buyer's, with the same paperwork and delivery confirmation as any other file on our desk.",
+    body: "Not every shipment fills a container. Export documents, product samples, spare parts, and small parcels move on their own clock, and putting them on a full freight booking costs time you do not have. We run them as courier consignments, by air when the deadline is short, consolidated by sea when the cost matters more than the day. They are collected at your door and delivered to your buyer's, with the same paperwork and delivery confirmation as any other file on our desk.",
     items: [
       "Air Courier for Documents and Samples",
       "Economy Sea Courier via Consolidation",

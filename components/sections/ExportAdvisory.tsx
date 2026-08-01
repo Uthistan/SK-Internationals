@@ -23,7 +23,7 @@ export function ExportAdvisory() {
             Five Stages Between Here and Your First Shipment
           </Heading>
           <Text as="p" size="body-lg" color="secondary" className="mt-5">
-            Most first-time exporters stall on paperwork, not on demand. We work
+            Most first time exporters stall on paperwork, not on demand. We work
             through the sequence in order, so nothing surfaces at the port that
             should have been settled months earlier.
           </Text>

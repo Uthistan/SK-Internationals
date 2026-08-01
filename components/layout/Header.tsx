@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
+import { Button, HEADER_CTA_CLASSES } from "@/components/ui/Button";
 import { NavItem } from "@/components/layout/NavItem";
 import { NAV_LINKS, ROUTES } from "@/components/layout/nav-links";
 import { cn } from "@/lib/utils";
@@ -69,12 +69,12 @@ export function Header() {
           className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Image
-            src="/logo.png"
-            alt=""
+            src="/logo-header.png"
+            alt="logo"
             width={320}
             height={182}
             priority
-            className="h-14 w-auto md:h-18"
+            className="h-22 w-40"
           />
         </NextLink>
 
@@ -94,7 +94,10 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
-            <Button href={ROUTES.requestQuote} className="rounded-full!">
+            <Button
+              href={ROUTES.requestQuote}
+              className={cn("rounded-full!", HEADER_CTA_CLASSES)}
+            >
               <span className="inline-flex items-center gap-2">
                 Request Quote
                 <ArrowRight size={16} aria-hidden="true" />

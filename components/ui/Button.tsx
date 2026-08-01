@@ -34,6 +34,16 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost: "text-secondary hover:text-primary",
 };
 
+/**
+ * The header's call to action, which runs the primary variant inverted: white
+ * fill, orange label. Not a variant of its own, because the treatment exists for
+ * exactly one button — but it is shared rather than copied, so the desktop bar
+ * and the mobile overlay cannot drift apart. The hairline keeps the pill defined
+ * against `header-glass`, which is itself near-white.
+ */
+export const HEADER_CTA_CLASSES =
+  "border border-primary/30 bg-white! text-primary! shadow-[0_2px_16px_rgba(11,37,69,0.10)]! hover:bg-white! hover:text-primary-hover! hover:border-primary/60 hover:shadow-[0_2px_24px_rgba(11,37,69,0.18)]!";
+
 export function Button({ variant = "primary", className, children, href, ...rest }: ButtonProps) {
   const classes = cn(baseClasses, variantClasses[variant], className);
 

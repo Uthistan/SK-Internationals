@@ -12,12 +12,12 @@ export interface WhyChooseItem {
  */
 export const WHY_CHOOSE_US: WhyChooseItem[] = [
   {
-    title: "Pan-India Presence",
+    title: "Pan India Presence",
     desc: "Local teams in six major cities, so coordination happens where your cargo actually is.",
   },
   {
     title: "Worldwide Delivery",
-    desc: "Door to door, port to door, or door to port by sea and air — whichever leg you need us to hold.",
+    desc: "Door to door, port to door, or door to port by sea and air, whichever leg you need us to hold.",
   },
   {
     title: "Proactive Updates",
@@ -32,7 +32,7 @@ export const WHY_CHOOSE_US: WhyChooseItem[] = [
     desc: "Trusted agents at the major sea ports and international airports on our lanes.",
   },
   {
-    title: "One-Window Solution",
+    title: "One Window Solution",
     desc: "3PL and 4PL on a single file: freight, customs, documentation, and warehousing from one team.",
   },
   {

@@ -30,7 +30,7 @@ export const OVERVIEW_ENTRIES: OverviewEntry[] = [
   {
     num: "02",
     title: "Who We Move For",
-    desc: "Manufacturers, agricultural exporters, textile mills, engineering firms, retail supply chains, and SMEs shipping abroad for the first time.",
+    desc: "Manufacturers, agricultural exporters, textile mills, engineering firms, retail supply chains, hazardous and bulk cargo shippers, and SMEs shipping abroad for the first time.",
     meta: `${INDUSTRIES.length} sectors served`,
     cue: "See the industries we serve",
     href: ROUTES.industries,

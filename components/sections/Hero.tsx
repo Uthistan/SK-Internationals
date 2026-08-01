@@ -180,7 +180,7 @@ export function Hero() {
 
           <div ref={subheadRef}>
             <Text as="p" size="body-lg" className="max-w-xl text-white/80!">
-              Sea freight and air freight, run with equal weight by one team —
+              Sea freight and air freight, run with equal weight by one team,
               plus the road and rail legs either end. A 3PL and 4PL partner to
               importers and exporters, door to door.
             </Text>

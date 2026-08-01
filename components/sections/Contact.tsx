@@ -303,7 +303,7 @@ export function Contact() {
                       defaultValue=""
                       {...register("service")}
                     >
-                      <option value="">Not sure yet — advise me</option>
+                      <option value="">Not sure yet, advise me</option>
                       {SERVICE_OPTIONS.map((service) => (
                         <option key={service} value={service}>
                           {service}
@@ -539,7 +539,7 @@ function DeskGroup({ desk }: { desk: ContactDesk }) {
                 </a>
               ) : (
                 <span aria-hidden="true" className="text-body text-border">
-                  —
+                  ·
                 </span>
               )}
             </div>

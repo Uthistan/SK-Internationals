@@ -1,7 +1,7 @@
 export const ABOUT_PARAGRAPHS: string[] = [
   "At SK Internationals, we partner with businesses to simplify logistics, streamline operations, and support sustainable growth. Every shipment we manage reflects our commitment to reliability, transparency, and relationships built to last.",
   "Established in 2011, we have spent over a decade building trusted relationships by delivering dependable logistics solutions backed by a team with 20+ years of industry experience.",
-  "We are a full-service EXIM and logistics support company, operating as a 3PL and 4PL provider for importers and exporters. Freight, customs clearance, DGFT and licensing work, compliance, and warehousing all sit on one shipment file, held by one team from the first instruction to the final delivery.",
+  "We are a full service EXIM and logistics support company, operating as a 3PL and 4PL provider for importers and exporters. Freight, customs clearance, DGFT and licensing work, compliance, and warehousing all sit on one shipment file, held by one team from the first instruction to the final delivery.",
 ];
 
 export interface AboutHighlight {

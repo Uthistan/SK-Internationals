@@ -49,6 +49,20 @@ export const INDUSTRIES: Industry[] = [
     creditHref: "https://unsplash.com/@zhengjialuminum",
   },
   {
+    name: "DG Goods",
+    desc: "Hazardous cargo classified, packed, and declared to IMDG and IATA rules.",
+    image: "/images/industries/dg-goods.jpg",
+    credit: "benjamin lehman on Unsplash",
+    creditHref: "https://unsplash.com/@abject",
+  },
+  {
+    name: "BigBulk Goods",
+    desc: "Break bulk, over dimensional, and project cargo moved on the equipment it needs.",
+    image: "/images/industries/bigbulk-goods.jpg",
+    credit: "Julia Taubitz on Unsplash",
+    creditHref: "https://unsplash.com/@justmejuliee",
+  },
+  {
     name: "Retail & FMCG",
     desc: "Reliable transportation for consumer supply chains that move quickly.",
     image: "/images/industries/retail-fmcg.jpg",
