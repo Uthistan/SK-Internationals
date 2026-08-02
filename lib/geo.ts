@@ -5,6 +5,24 @@
 export const MAP_WIDTH = 1000;
 export const MAP_HEIGHT = 500;
 
+/**
+ * The slice of the projection actually drawn. The plate runs pole to pole, but
+ * Antarctica is not in the land data and nothing in the network reaches beyond
+ * ±58°, so the full frame spends a fifth of its height on empty bands.
+ *
+ * Cropping them is the cheapest legibility win on the map: at the same
+ * container width every lane, marker, and label lands 25% larger, which is also
+ * what buys the label layout enough room to stop colliding.
+ */
+export const MAP_VIEW = {
+  x: 0,
+  y: 12,
+  width: MAP_WIDTH,
+  height: 400,
+} as const;
+
+export const MAP_VIEW_BOX = `${MAP_VIEW.x} ${MAP_VIEW.y} ${MAP_VIEW.width} ${MAP_VIEW.height}`;
+
 export interface Point {
   x: number;
   y: number;

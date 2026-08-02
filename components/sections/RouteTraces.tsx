@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
-import { CORRIDOR_STYLE } from "@/lib/corridors";
+import { CORRIDOR_STYLE, type CorridorStyle } from "@/lib/corridors";
 import { cn } from "@/lib/utils";
 
 import type { CorridorMode } from "@/content/network";
@@ -12,10 +12,9 @@ export interface Corridor {
   /** Arc from the gateway to the region, in map user space. */
   path: string;
   /**
-   * Which network the corridor belongs to. Colour, weight, and the direction
-   * of the bow are what tell the four modes apart — a dash pattern is
-   * unavailable because `.route-line` already spends stroke-dasharray on the
-   * draw-on animation. See CORRIDOR_STYLE for the treatment per mode.
+   * Which network the corridor belongs to. Colour, weight, dash, and the
+   * direction of the bow are what tell the four modes apart — see
+   * CORRIDOR_STYLE for the treatment per mode.
    */
   mode: CorridorMode;
 }
@@ -24,10 +23,62 @@ interface RouteTracesProps {
   corridors: Corridor[];
 }
 
-// Offsets each route within the shared 4.5s cycle so they draw in sequence
-// rather than sweeping the map in unison. Kept small enough that the last
-// corridor still starts inside one cycle at the current corridor count.
-const STAGGER_SECONDS = 0.2;
+/** A corridor with its treatment and its place in the entry sequence resolved. */
+interface Lane extends Corridor {
+  style: CorridorStyle;
+  /** Seconds after the map enters view before this lane starts. */
+  delay: number;
+}
+
+/**
+ * Paint order, thinnest and quietest first. Sea is absent because it is placed
+ * last by definition — it is the primary network, and it belongs on top of
+ * everything the map draws.
+ */
+const SECONDARY_ORDER: CorridorMode[] = ["rail", "land", "air"];
+
+/** Offsets between sea lanes, so the network arrives as a sequence. */
+const DRAW_STAGGER_SECONDS = 0.12;
+
+/** Held until the sea lanes have essentially landed. */
+const SECONDARY_DELAY_SECONDS = 0.5;
+const SECONDARY_STAGGER_SECONDS = 0.06;
+
+/**
+ * Spread across the light's own 6s cycle, so the lights sit evenly around the
+ * loop instead of setting off together.
+ */
+const LIGHT_STAGGER_SECONDS = 0.66;
+const LIGHT_RADIUS = 1.5;
+
+/**
+ * Splits the corridors into the order they are painted and the order they
+ * arrive in. Sea draws first and paints last; everything else fades in
+ * underneath once the sea lanes have landed.
+ */
+function toLanes(corridors: Corridor[]): Lane[] {
+  const withStyle = corridors.map((corridor) => ({
+    ...corridor,
+    style: CORRIDOR_STYLE[corridor.mode],
+  }));
+
+  const secondary = withStyle
+    .filter((lane) => !lane.style.primary)
+    .sort(
+      (a, b) =>
+        SECONDARY_ORDER.indexOf(a.mode) - SECONDARY_ORDER.indexOf(b.mode),
+    )
+    .map((lane, index) => ({
+      ...lane,
+      delay: SECONDARY_DELAY_SECONDS + index * SECONDARY_STAGGER_SECONDS,
+    }));
+
+  const primary = withStyle
+    .filter((lane) => lane.style.primary)
+    .map((lane, index) => ({ ...lane, delay: index * DRAW_STAGGER_SECONDS }));
+
+  return [...secondary, ...primary];
+}
 
 /**
  * Route overlay for the network map, drawn on when the map first comes into
@@ -41,6 +92,7 @@ const STAGGER_SECONDS = 0.2;
 export function RouteTraces({ corridors }: RouteTracesProps) {
   const groupRef = useRef<SVGGElement>(null);
   const [hasEntered, setHasEntered] = useState(false);
+  const lanes = useMemo(() => toLanes(corridors), [corridors]);
 
   useEffect(() => {
     const group = groupRef.current;
@@ -64,39 +116,74 @@ export function RouteTraces({ corridors }: RouteTracesProps) {
   }, []);
 
   return (
-    <g ref={groupRef} filter="url(#route-glow)">
-      {corridors.map((corridor, index) => {
-        const delay = `${index * STAGGER_SECONDS}s`;
-        const style = CORRIDOR_STYLE[corridor.mode];
+    <g ref={groupRef}>
+      {lanes.map((lane, index) => {
+        const { style } = lane;
+        // Custom properties are how the mode table reaches the stylesheet that
+        // scales strokes for small viewports; React's CSSProperties has no slot
+        // for them, so the object is asserted rather than typed loosely.
+        const laneStyle = {
+          "--map-lane-width": String(style.width),
+          animationDelay: `${lane.delay}s`,
+        } as CSSProperties;
+
+        const laneClass = cn(
+          "map-lane",
+          style.primary ? "map-lane--draws" : "map-lane--fades",
+          hasEntered && "map-lane--entered",
+        );
 
         return (
-          <g key={`${corridor.mode}-${corridor.name}`}>
+          <g key={`${lane.mode}-${lane.name}`}>
+            {/* A wider wash of the lane's own colour, drawn beneath it and
+                animated in step, so the sea corridors carry a glow without a
+                blur filter re-rendering the whole map every frame. */}
+            {style.halo && (
+              <path
+                d={lane.path}
+                pathLength={1}
+                fill="none"
+                stroke={style.stroke}
+                strokeOpacity={style.halo.opacity}
+                strokeLinecap="round"
+                className={laneClass}
+                style={
+                  {
+                    ...laneStyle,
+                    "--map-lane-width": String(style.halo.width),
+                  } as CSSProperties
+                }
+              />
+            )}
+
             <path
-              d={corridor.path}
+              d={lane.path}
               pathLength={1}
               fill="none"
               stroke={style.stroke}
               strokeWidth={style.width}
               strokeOpacity={style.opacity}
+              strokeDasharray={style.dash}
               strokeLinecap="round"
-              className={cn("route-line", hasEntered && "route-line--drawing")}
-              style={hasEntered ? { animationDelay: delay } : undefined}
+              className={laneClass}
+              style={laneStyle}
             />
 
-            {/* Mounted only once drawing starts, so the light never sits
-                parked at the origin waiting for its cue. Carries its own
-                corridor's colour, so a light on a land lane is never mistaken
-                for one on the sea lane crossing beneath it. */}
-            {hasEntered && (
+            {/* Mounted only once the map has been seen, so no light sits parked
+                at an origin waiting for its cue. Carried by the sea lanes alone:
+                one moving element per primary corridor is the whole of the
+                map's continuous motion, and it is what says the network is
+                worked rather than illustrated. */}
+            {hasEntered && style.primary && (
               <circle
-                r={style.pulseRadius}
-                fill="var(--color-surface)"
+                r={LIGHT_RADIUS}
+                fill="var(--color-map-surface)"
                 stroke={style.stroke}
                 strokeWidth="1"
-                className="route-pulse"
+                className="map-light"
                 style={{
-                  offsetPath: `path("${corridor.path}")`,
-                  animationDelay: delay,
+                  offsetPath: `path("${lane.path}")`,
+                  animationDelay: `${index * LIGHT_STAGGER_SECONDS}s`,
                 }}
               />
             )}

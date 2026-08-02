@@ -10,7 +10,7 @@ import { ORGANIZATION, SITE_URL } from "@/lib/site";
 const description =
   "Reach the SK Internationals desk that owns your file: customer service, operations, or compliance. Call, WhatsApp, email, or send an enquiry and we will respond within one business day.";
 
-const HERO_IMAGE = "/images/heroes/contact.jpg";
+const HERO_IMAGE = "/images/heroes/contact2.png";
 
 export const metadata: Metadata = {
   title: "Contact",

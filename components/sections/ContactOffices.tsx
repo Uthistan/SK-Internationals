@@ -8,10 +8,23 @@ import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { StatCard } from "@/components/ui/StatCard";
+import { MAP_LABEL_CLASS, WorldMap } from "@/components/ui/WorldMap";
+import { MapMarker } from "@/components/ui/MapMarker";
+import { MapOriginField } from "@/components/ui/MapOriginField";
+import { RouteTraces, type Corridor } from "@/components/sections/RouteTraces";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { PlaneIcon, ShipIcon, TruckIcon } from "@/components/ui/VehicleIcons";
-import { LOCATIONS, OFFICE_CITY_COUNT } from "@/content/network";
+import { CORRIDOR_STYLE } from "@/lib/corridors";
+import { arcPath, project } from "@/lib/geo";
+import {
+  GATEWAY_CENTROID,
+  GATEWAYS,
+  gatewayFor,
+  LOCATIONS,
+  NETWORK_REGIONS,
+  OFFICE_CITY_COUNT,
+  type CorridorMode,
+} from "@/content/network";
 import { AFTER_HOURS_NOTE, OFFICE_HOURS } from "@/content/contacts";
 import { ABOUT_STATS } from "@/content/about";
 import { MAPS_DIRECTIONS_HREF, OFFICE_ADDRESS_LINES } from "@/lib/site";
@@ -56,9 +69,10 @@ const PLACES: Place[] = (() => {
  */
 export function ContactOffices() {
   const scopeRef = useRef<HTMLDivElement>(null);
-  useScrollReveal(scopeRef, "[data-reveal]", { start: "top 88%", stagger: 0.1 });
-  const prefersReducedMotion = useReducedMotion();
-
+  useScrollReveal(scopeRef, "[data-reveal]", {
+    start: "top 88%",
+    stagger: 0.1,
+  });
   return (
     <Section id="offices">
       <Container>
@@ -168,203 +182,182 @@ export function ContactOffices() {
             />
           </div>
 
-          <NetworkBand prefersReducedMotion={prefersReducedMotion} />
+          <NetworkBand />
         </div>
       </Container>
     </Section>
   );
 }
 
-interface NetworkBandProps {
-  prefersReducedMotion: boolean;
-}
-
-// Network canvas is authored wide (1200×440) and rendered in a matching
-// wide band so the full route geometry stays visible rather than cropping.
-// Two origins, not one: every arc used to leave Chennai — a seaport — which
-// made even this decorative band argue that we are a sea-only forwarder.
-const SEA_ORIGIN = { x: 772, y: 250 };
-const AIR_ORIGIN = { x: 742, y: 122 };
-
-const TRADE_ROUTES = [
-  { id: "usa", label: "USA", mode: "air", x: 196, y: 168, bow: -120 },
-  { id: "europe", label: "Europe", mode: "air", x: 536, y: 116, bow: -78 },
-  { id: "middle-east", label: "Middle East", mode: "sea", x: 656, y: 196, bow: -34 },
-  { id: "sea", label: "Southeast Asia", mode: "sea", x: 918, y: 296, bow: 38 },
-] as const;
-
-// Sea gateways read as filled discs, the air gateway as an open ring — the same
-// solid/open distinction the network map on /services uses.
-const INDIA_HUBS = [
-  { x: SEA_ORIGIN.x, y: SEA_ORIGIN.y, label: "Chennai", mode: "sea" },
-  { x: 752, y: 286, label: "Tuticorin", mode: "sea" },
-  { x: AIR_ORIGIN.x, y: AIR_ORIGIN.y, label: "Delhi", mode: "air" },
-] as const;
-
-// Labels are carried for screen readers only — three silhouettes read faster
-// than three captions, but a shape alone must never be the sole carrier.
-const TRANSPORT_MODES = [
-  { label: "Sea freight", icon: ShipIcon },
-  { label: "Air freight", icon: PlaneIcon },
-  { label: "Road freight", icon: TruckIcon },
-];
-
-/** Quadratic arc from the gateway of the given mode out to a destination. */
-function routePath(x: number, y: number, bow: number, mode: "sea" | "air") {
-  const origin = mode === "air" ? AIR_ORIGIN : SEA_ORIGIN;
-  const mx = (origin.x + x) / 2;
-  const my = (origin.y + y) / 2 + bow;
-  return `M${origin.x},${origin.y} Q${mx},${my} ${x},${y}`;
-}
+/**
+ * The destinations this band names.
+ *
+ * A subset of the network map on /services, and deliberately so: this is a
+ * reach statement closing a contact page, not the network map itself. Six
+ * points across five continents make the global claim in the fewest marks, and
+ * leaving the two overland neighbours unnamed keeps the labels off the one
+ * part of the map that is already dense.
+ */
+const BAND_DESTINATIONS = ["USA", "Europe", "Middle East", "Africa", "South East Asia", "Australia"];
 
 /**
- * The reach statement that closes the page: four corridors drawn out of the
- * ports of loading, with the modes that serve them named beneath. It follows
+ * The gateways this band names. Cargo leaves from all five — the lanes are
+ * built by the same gatewayFor rule the /services map uses, so the two graphics
+ * cannot disagree about where a corridor starts — but three names over the
+ * subcontinent is all this band can carry at its size, and the register
+ * directly above it has already named every city we hold.
+ */
+const BAND_GATEWAYS = ["Chennai", "Tuticorin", "Delhi"];
+
+const BAND_REGIONS = NETWORK_REGIONS.filter((region) =>
+  BAND_DESTINATIONS.includes(region.name),
+);
+
+// The overland pair, carried without labels. They are what the truck in the
+// legend below refers to: drop them and the key names a mode the map never
+// draws, which is the contradiction the old band shipped.
+const BAND_OVERLAND = NETWORK_REGIONS.filter((region) =>
+  region.modes.includes("land"),
+);
+
+const BAND_CORRIDORS: Corridor[] = [
+  // Read off each region's own modes rather than assumed: the band must never
+  // draw a lane the network data does not claim.
+  ...BAND_REGIONS.flatMap((region) =>
+    region.modes
+      .filter((mode) => mode === "sea" || mode === "air")
+      .map((mode) => ({ region, mode })),
+  ),
+  ...BAND_OVERLAND.map((region) => ({ region, mode: "land" as const })),
+].map(({ region, mode }) => {
+  const gateway = gatewayFor(mode, region.lon);
+  return {
+    name: region.name,
+    mode,
+    path: arcPath(
+      project(gateway.lat, gateway.lon),
+      project(region.lat, region.lon),
+      CORRIDOR_STYLE[mode].bow,
+    ),
+  };
+});
+
+const BAND_MARKERS = [
+  ...BAND_REGIONS.map((region) => ({ ...region, label: region.name })),
+  ...BAND_OVERLAND.map((region) => ({ ...region, label: null })),
+].map((region) => ({ ...region, point: project(region.lat, region.lon) }));
+
+const BAND_GATEWAY_POINTS = GATEWAYS.map((gateway) => ({
+  ...gateway,
+  point: project(gateway.lat, gateway.lon),
+  named: BAND_GATEWAYS.includes(gateway.label),
+}));
+
+const BAND_ORIGIN = project(GATEWAY_CENTROID.lat, GATEWAY_CENTROID.lon);
+
+/** Seconds between hub pulses, so the gateways never breathe in unison. */
+const HUB_PULSE_STAGGER_SECONDS = 0.8;
+
+// Labels are carried for screen readers only — three silhouettes read faster
+// than three captions, but a shape alone must never be the sole carrier. Each
+// takes its mode's lane colour from the same table the map draws with, so the
+// row reads as a key to the picture above it rather than as three ornaments.
+const TRANSPORT_MODES: { mode: CorridorMode; label: string; icon: typeof ShipIcon }[] =
+  [
+    { mode: "sea", label: "Sea freight", icon: ShipIcon },
+    { mode: "air", label: "Air freight", icon: PlaneIcon },
+    { mode: "land", label: "Road freight", icon: TruckIcon },
+  ];
+
+const BAND_MAP_LABEL = `World map of the SK Internationals freight network, with sea, air, and road corridors leaving the Indian gateways for ${BAND_DESTINATIONS.join(
+  ", ",
+)}.`;
+
+/**
+ * The reach statement that closes the page: the corridors drawn on the earth
+ * they actually cross, with the modes that serve them named beneath. It follows
  * the register deliberately — the rows above answer where we are, and this
  * answers how far that reaches.
+ *
+ * The map underneath is the same one /services carries: same projection, same
+ * coastline, same lane table, re-pointed onto navy through map tokens. Nothing
+ * here is drawn to invented coordinates, which is the whole of the difference
+ * between a network and a graphic that looks like one.
+ *
+ * The caption sits in a bar below the map rather than in a scrim over it. On a
+ * gradient the southern half of the world — Africa, Australia, the lanes into
+ * both — was being read through the text sitting on top of it.
  */
-function NetworkBand({ prefersReducedMotion }: NetworkBandProps) {
+function NetworkBand() {
   return (
     <div
       data-reveal
-      className="relative mt-16 aspect-4/3 w-full overflow-hidden rounded-2xl bg-secondary sm:aspect-2/1 lg:aspect-1200/440"
+      className="map-dark mt-16 w-full overflow-hidden rounded-2xl border border-white/10 bg-secondary"
     >
-      <div
-        aria-hidden="true"
-        className="animate-grid-drift absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.55)_1px,transparent_1px)] bg-size-[32px_32px] opacity-[0.10]"
-      />
+      {/* Letterboxed rather than cropped at narrow widths: the map holds its
+          2.5:1 frame and the navy above and below it is the same navy as the
+          panel, so the band simply reads as taller sky and deeper water. The
+          alternative — slicing to fill — would cut the Americas off the left
+          edge, which is the one thing a reach statement cannot afford. */}
+      <div className="aspect-3/2 w-full sm:aspect-2/1 lg:aspect-5/2">
+        <WorldMap label={BAND_MAP_LABEL}>
+          <MapOriginField at={BAND_ORIGIN} />
 
-      <svg
-        viewBox="0 0 1200 440"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full"
-      >
-        <defs>
-          <radialGradient id="contact-origin-glow">
-            <stop
-              offset="0%"
-              stopColor="var(--color-accent)"
-              stopOpacity="0.45"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--color-accent)"
-              stopOpacity="0"
-            />
-          </radialGradient>
-          <linearGradient id="contact-route-fade" x1="0" x2="1">
-            <stop
-              offset="0%"
-              stopColor="var(--color-accent)"
-              stopOpacity="0.15"
-            />
-            <stop
-              offset="55%"
-              stopColor="var(--color-accent)"
-              stopOpacity="0.85"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--color-accent)"
-              stopOpacity="0.35"
-            />
-          </linearGradient>
-        </defs>
+          <RouteTraces corridors={BAND_CORRIDORS} />
 
-        <circle
-          cx={SEA_ORIGIN.x}
-          cy={SEA_ORIGIN.y}
-          r="190"
-          fill="url(#contact-origin-glow)"
-        />
-
-        {TRADE_ROUTES.map((route) => (
-          <path
-            key={route.id}
-            d={routePath(route.x, route.y, route.bow, route.mode)}
-            fill="none"
-            stroke="url(#contact-route-fade)"
-            strokeWidth="1.75"
-            strokeDasharray="5 8"
-            strokeLinecap="round"
-          />
-        ))}
-
-        {!prefersReducedMotion &&
-          TRADE_ROUTES.map((route, i) => (
-            <circle key={route.id} r="4" fill="var(--color-accent)">
-              <animateMotion
-                dur={`${4.5 + i * 0.7}s`}
-                repeatCount="indefinite"
-                path={routePath(route.x, route.y, route.bow, route.mode)}
-              />
-            </circle>
+          {BAND_MARKERS.map((region) => (
+            <g
+              key={region.name}
+              transform={`translate(${region.point.x},${region.point.y})`}
+            >
+              <MapMarker role="destination" />
+              {region.label && (
+                <text
+                  x={region.dx}
+                  y={region.dy}
+                  textAnchor={region.anchor}
+                  stroke="var(--color-map-halo)"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
+                  paintOrder="stroke"
+                  className={`fill-white/80 font-semibold ${MAP_LABEL_CLASS.region}`}
+                >
+                  {region.label}
+                </text>
+              )}
+            </g>
           ))}
 
-        {TRADE_ROUTES.map((route) => (
-          <g key={route.id}>
-            <circle
-              cx={route.x}
-              cy={route.y}
-              r="4"
-              fill="rgba(255,255,255,.9)"
-            />
-            <circle
-              cx={route.x}
-              cy={route.y}
-              r="10"
-              fill="none"
-              stroke="rgba(255,255,255,.28)"
-            />
-            <text
-              x={route.x}
-              y={route.y - 22}
-              textAnchor="middle"
-              className="fill-white/75 text-[13px] font-semibold"
+          {BAND_GATEWAY_POINTS.map((gateway, i) => (
+            <g
+              key={gateway.label}
+              transform={`translate(${gateway.point.x},${gateway.point.y})`}
             >
-              {route.label}
-            </text>
-          </g>
-        ))}
-
-        {INDIA_HUBS.map((hub) => (
-          <g key={hub.label}>
-            {!prefersReducedMotion && (
-              <circle
-                cx={hub.x}
-                cy={hub.y}
-                r="6"
-                fill="var(--color-accent)"
-                className="animate-route-ping"
+              <MapMarker
+                role="gateway"
+                mode={gateway.mode}
+                pulseDelay={i * HUB_PULSE_STAGGER_SECONDS}
               />
-            )}
-            {/* Filled for a seaport, open for an air gateway — the same
-                distinction the /services map makes, so the two graphics teach
-                one visual language rather than two. */}
-            <circle
-              cx={hub.x}
-              cy={hub.y}
-              r="6"
-              fill={
-                hub.mode === "sea" ? "var(--color-accent)" : "var(--color-secondary)"
-              }
-              stroke="var(--color-accent)"
-              strokeWidth={hub.mode === "sea" ? 0 : 2.5}
-            />
-            <text
-              x={hub.x}
-              y={hub.y + 26}
-              textAnchor="middle"
-              className="fill-white text-[13px] font-bold"
-            >
-              {hub.label}
-            </text>
-          </g>
-        ))}
-      </svg>
+              {gateway.named && (
+                <text
+                  x={gateway.dx}
+                  y={gateway.dy}
+                  textAnchor={gateway.anchor}
+                  stroke="var(--color-map-halo)"
+                  strokeWidth="3.5"
+                  strokeLinejoin="round"
+                  paintOrder="stroke"
+                  className={`fill-white font-bold ${MAP_LABEL_CLASS.gateway}`}
+                >
+                  {gateway.label}
+                </text>
+              )}
+            </g>
+          ))}
+        </WorldMap>
+      </div>
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 bg-linear-to-t from-secondary via-secondary/70 to-transparent p-6 md:p-9">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-t border-white/10 p-6 md:p-9">
         <div>
           <p className="text-caption font-semibold tracking-widest text-accent uppercase">
             Our Network
@@ -376,14 +369,18 @@ function NetworkBand({ prefersReducedMotion }: NetworkBandProps) {
         <div className="max-w-xs">
           {/* The three legs the corridors above are actually run on, drawn in
               the house set rather than pulled from an icon library, so they sit
-              in the same hand as the map. */}
+              in the same hand as the map — and carrying each mode's own lane
+              colour, so the key can be matched to the map without a caption. */}
           <ul className="flex items-center gap-4 md:justify-end">
-            {TRANSPORT_MODES.map(({ label, icon: Icon }, i) => (
+            {TRANSPORT_MODES.map(({ label, icon: Icon, mode }, i) => (
               <li key={label} className="flex items-center gap-4">
                 {i > 0 && (
                   <span aria-hidden="true" className="h-5 w-px bg-white/20" />
                 )}
-                <Icon className="h-5 w-auto text-white/75" />
+                <Icon
+                  className="h-5 w-auto"
+                  style={{ color: CORRIDOR_STYLE[mode].stroke }}
+                />
                 <span className="sr-only">{label}</span>
               </li>
             ))}

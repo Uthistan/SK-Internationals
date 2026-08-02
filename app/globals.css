@@ -21,8 +21,35 @@
 
   /* Route colour for the network map. A step lighter than the UI accent
      because a 1.6px line has to survive a soft glow on a white surface —
-     #ea580c reads muddy at that weight, this holds its hue. */
+     #ea580c reads muddy at that weight, this holds its hue. Sea lanes only:
+     the orange is what ranks the volume network above the other three. */
   --color-route: #f97316;
+
+  /* The other three lanes, down the navy scale in hierarchy order. The palette
+     is fixed at orange, white, and navy, so the map earns its second, third,
+     and fourth line colours by value rather than by hue — air is the sanctioned
+     mid navy, land is that navy at ~45% over white, rail is the deep navy
+     itself. See lib/corridors.ts for how each is drawn. */
+  --color-route-air: #3d5878;
+  --color-route-land: #94a8c2;
+  --color-route-rail: #0b2545;
+
+  /* Cartography. The map is the one surface that needs values between white and
+     navy for its own sake: without a ground the coastline cannot read as a
+     coastline, and a flat white plate reads as a diagram rather than a world.
+     Held to an ~8% spread so the ocean is felt rather than seen. */
+  --color-map-ocean: #f2f7fd;
+  --color-map-ocean-deep: #dfeaf6;
+  --color-map-land: #ffffff;
+  --color-map-coast: #0b2545;
+  --color-map-texture: rgba(11, 37, 69, 0.1);
+  /* Soft plate drawn under map labels and around the coast, so a name stays
+     legible over land, ocean, and lane alike. */
+  --color-map-halo: rgba(255, 255, 255, 0.85);
+  /* What a marker's core and a travelling light are knocked out against.
+     Tracks `surface` on the light map and the panel navy on the dark one,
+     which is why it is a token of its own rather than a use of `surface`. */
+  --color-map-surface: #ffffff;
 
   --color-navbar-glass: rgba(255, 255, 255, 0.65);
   --color-navbar-border: rgba(255, 255, 255, 0.2);
@@ -155,100 +182,191 @@ summary {
   }
 }
 
-/* --- Network map route traces ------------------------------------------- */
+/* --- Network map --------------------------------------------------------- */
 
-/* Draw out from the origin, hold the finished route, then drain from the same
-   end — a continuous cycle rather than a one-shot, so the map keeps moving
-   however long the visitor stays with it. Offset runs 1 → 0 → −1: at −1 the
-   dash has travelled a full path length past its start, clearing the line. */
-@keyframes route-draw {
-  0% {
-    stroke-dashoffset: 1;
-  }
-  42% {
-    stroke-dashoffset: 0;
-  }
-  58% {
-    stroke-dashoffset: 0;
-  }
-  100% {
-    stroke-dashoffset: -1;
+/* The map is drawn in a fixed 1000-unit space that scales with its container,
+   so a lane tuned to 1.9 units on a 1250px panel arrives at two-thirds of a
+   pixel on a 320px phone and antialiases away to nothing. One variable, set on
+   the <svg> and inherited by everything inside it, lifts the strokes and
+   markers back to a legible weight at small sizes without touching the
+   projection, the label layout, or any coordinate on the map. */
+.world-map {
+  --map-scale: 1.9;
+}
+
+@media (min-width: 48rem) {
+  .world-map {
+    --map-scale: 1;
   }
 }
 
-/* Corridors declare pathLength="1", normalising every route to the same
-   length — so one duration draws a short domestic hop and a trans-Atlantic
-   arc at the same apparent speed. Resting state is fully retracted; the
-   drawing class is added once the map scrolls into view. */
-.route-line {
+/* The map on navy.
+ *
+ * Everything structural is shared — the projection, the coastline, the
+ * graticule, the lane table, the markers — and only the surface values change,
+ * so the two maps cannot drift into being two different graphics. That is also
+ * why the lane colours are re-pointed here rather than a second table being
+ * written: air's #3d5878 and rail's #0b2545 are chosen to sit on white and are
+ * invisible on navy, so on this ground they resolve to the same hues lifted to
+ * where they can be read.
+ *
+ * Belongs on the panel, not on the <svg>: a legend sitting beside the map reads
+ * its swatch colours from these same variables, and scoping them to the SVG
+ * would leave the key drawing light-theme lanes on a dark ground.
+ *
+ * Land is held at 9%: enough for a coastline to be recognised across the room,
+ * not enough to compete with the routes it carries. */
+.map-dark {
+  --color-map-ocean: #0e2a4e;
+  --color-map-ocean-deep: #0b2545;
+  --color-map-land: rgba(255, 255, 255, 0.09);
+  --color-map-coast: #ffffff;
+  --color-map-texture: rgba(255, 255, 255, 0.05);
+  --color-map-halo: rgba(11, 37, 69, 0.8);
+  --color-map-surface: #0b2545;
+
+  --color-route-air: #8ab4e8;
+  --color-route-land: #a9bcd4;
+  --color-route-rail: #6b86a8;
+}
+
+/* Each lane carries its own weight as a custom property so the mode table in
+   lib/corridors.ts stays the one place a stroke width is decided. */
+.map-lane {
+  stroke-width: calc(var(--map-lane-width) * var(--map-scale));
+}
+
+.map-node {
+  transform: scale(var(--map-scale));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Sea lanes declare pathLength="1", normalising every route to the same length,
+   so one duration draws a short hop and a trans-Atlantic arc at the same
+   apparent speed. Resting state is fully retracted; the entered class is added
+   once the map scrolls into view.
+
+   Deliberately a one-shot with a forwards fill, where this was once an infinite
+   draw-hold-drain cycle. A map whose primary network empties itself every few
+   seconds cannot answer "where do you ship?" in the two seconds it has, and the
+   drained frames were a third of its life. The network arrives, then stays. */
+@keyframes map-lane-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.map-lane--draws {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
 
-.route-line--drawing {
-  animation: route-draw 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+.map-lane--draws.map-lane--entered {
+  animation: map-lane-draw 1.4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
-/* Travel is pinned to the draw phase, then the light waits out the hold and
-   drain at the destination with no opacity. */
-@keyframes route-pulse-travel {
-  0% {
+/* Air, road, and rail don't draw. They resolve underneath once the sea lanes
+   have landed — which is what states the hierarchy in time as well as in
+   weight, and what keeps twenty-one simultaneous strokes off the screen. */
+@keyframes map-lane-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.map-lane--fades {
+  opacity: 0;
+}
+
+.map-lane--fades.map-lane--entered {
+  animation: map-lane-fade 0.8s ease-out forwards;
+}
+
+/* The light riding a sea lane, and the only thing still moving once the map has
+   settled. Runs on its own long cycle rather than pinned to the draw, so the
+   network reads as worked rather than as a graphic replaying itself. Hidden
+   where offset-path is unsupported — otherwise the dot strands itself at the
+   SVG origin instead of following the route. */
+@keyframes map-light-travel {
+  from {
     offset-distance: 0%;
   }
-  42% {
-    offset-distance: 100%;
-  }
-  100% {
+  to {
     offset-distance: 100%;
   }
 }
 
-@keyframes route-pulse-fade {
-  0% {
-    opacity: 0;
-  }
-  6% {
-    opacity: 1;
-  }
-  38% {
-    opacity: 1;
-  }
-  46% {
-    opacity: 0;
-  }
+@keyframes map-light-fade {
+  0%,
   100% {
     opacity: 0;
   }
+  10%,
+  82% {
+    opacity: 1;
+  }
 }
 
-/* The light riding the head of the line. Same duration, easing, and delay as
-   the draw, so it stays pinned to the growing tip. Hidden entirely where
-   offset-path is unsupported — otherwise the dot would strand itself at the
-   SVG origin instead of following the route. */
-.route-pulse {
+.map-light {
   display: none;
 }
 
 @supports (offset-path: path("M0 0")) {
-  .route-pulse {
+  .map-light {
     display: block;
     offset-rotate: 0deg;
     animation:
-      route-pulse-travel 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite,
-      route-pulse-fade 4.5s linear infinite;
+      map-light-travel 6s linear infinite,
+      map-light-fade 6s linear infinite;
   }
 }
 
-/* A looping draw can't just be shortened: the global reduce rule would land it
-   on its final frame, which is the drained one — every route would vanish.
-   These visitors get the finished map instead. */
+/* Gateways breathe; destinations don't. Ten pinging destination markers plus
+   five pinging hubs made every point on the map claim the same rank, and the
+   ring is held to 2.1x on a four-second cycle — a hub reads as live at the edge
+   of notice, which is as much as a logistics map should ever ask for. */
+@keyframes map-hub-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+.map-hub-pulse {
+  animation: map-hub-pulse 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The global reduce rule shortens animations to their final frame, which for a
+   forwards fill is the finished map — correct, but stated explicitly here so it
+   survives any change to that rule. The travelling light and the hub pulse have
+   no final frame worth landing on, so they are dropped outright. */
 @media (prefers-reduced-motion: reduce) {
-  .route-line--drawing {
+  .map-lane--draws {
     animation: none;
     stroke-dashoffset: 0;
   }
 
-  .route-pulse {
+  .map-lane--fades {
+    animation: none;
+    opacity: 1;
+  }
+
+  .map-light,
+  .map-hub-pulse {
     display: none;
   }
 }
@@ -352,19 +470,6 @@ summary {
 
 .animate-logo-pulse {
   animation: logo-pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes grid-drift {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 28px 28px;
-  }
-}
-
-.animate-grid-drift {
-  animation: grid-drift 20s linear infinite;
 }
 
 @keyframes route-ping {

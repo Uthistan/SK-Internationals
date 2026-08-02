@@ -154,29 +154,91 @@ export interface Gateway {
  * weight and the corridors are drawn per mode. The two networks genuinely are
  * different, and showing that is more convincing than claiming parity in prose.
  */
+/**
+ * Label offsets are laid out as a clock around the cluster rather than by a
+ * uniform rule: the five gateways occupy roughly 35 x 55 map units, and Chennai
+ * and Bengaluru sit 7 units apart, so a name placed the same way twice collides
+ * every time. Reading anticlockwise from the north — Delhi north-west, Mumbai
+ * west, Bengaluru west, Tuticorin due south, Chennai east over the Bay — no two
+ * names share a band, and the four horizontal ones carry a leader line back to
+ * their dot so ownership is never in question.
+ */
 export const GATEWAYS: Gateway[] = [
   // Sea — the ports of loading.
-  { label: "Chennai", mode: "sea", lat: 13.08, lon: 80.27, dx: 13, dy: -8, anchor: "start" },
-  { label: "Tuticorin", mode: "sea", lat: 8.76, lon: 78.13, dx: -13, dy: 14, anchor: "end" },
+  { label: "Chennai", mode: "sea", lat: 13.08, lon: 80.27, dx: 14, dy: 2, anchor: "start" },
+  { label: "Tuticorin", mode: "sea", lat: 8.76, lon: 78.13, dx: 2, dy: 20, anchor: "middle" },
   // Air — the freight terminals we uplift from. Bengaluru and Delhi sit inland,
   // so they also make the map read as a country rather than a coastline.
-  { label: "Bengaluru", mode: "air", lat: 13.2, lon: 77.71, dx: -13, dy: 4, anchor: "end" },
-  { label: "Delhi", mode: "air", lat: 28.56, lon: 77.1, dx: -13, dy: -6, anchor: "end" },
-  { label: "Mumbai", mode: "air", lat: 19.09, lon: 72.87, dx: -13, dy: 2, anchor: "end" },
+  { label: "Bengaluru", mode: "air", lat: 13.2, lon: 77.71, dx: -20, dy: 3, anchor: "end" },
+  { label: "Delhi", mode: "air", lat: 28.56, lon: 77.1, dx: -12, dy: -6, anchor: "end" },
+  { label: "Mumbai", mode: "air", lat: 19.09, lon: 72.87, dx: -12, dy: -7, anchor: "end" },
 ];
 
-export const SEA_GATEWAYS = GATEWAYS.filter((g) => g.mode === "sea");
-export const AIR_GATEWAYS = GATEWAYS.filter((g) => g.mode === "air");
+/**
+ * Falls back to the first gateway so the map still draws if the city list is
+ * ever reordered or a label is renamed.
+ */
+const gatewayNamed = (label: string): Gateway =>
+  GATEWAYS.find((gateway) => gateway.label === label) ?? GATEWAYS[0];
+
+/**
+ * Centre of the gateway cluster — what a glow or a field over the origin is
+ * anchored to on either map. Averaged in degrees rather than in map units,
+ * which on an equirectangular projection is the same point: the projection is
+ * linear in both lat and lon.
+ */
+export const GATEWAY_CENTROID = {
+  lat: GATEWAYS.reduce((sum, g) => sum + g.lat, 0) / GATEWAYS.length,
+  lon: GATEWAYS.reduce((sum, g) => sum + g.lon, 0) / GATEWAYS.length,
+};
 
 /**
  * Where the road and rail corridors are worked from. Both land borders we
  * cross — Nepal and Bangladesh — are run off the North India desk, so the
  * overland modes originate at the Delhi branch rather than at an invented
- * border office. Falls back to the first gateway so the map still draws if
- * the city list is ever reordered.
+ * border office.
  */
-export const OVERLAND_GATEWAY =
-  GATEWAYS.find((g) => g.label === "Delhi") ?? GATEWAYS[0];
+export const OVERLAND_GATEWAY = gatewayNamed("Delhi");
+
+/**
+ * India's own longitude, near enough: the line that separates a westbound lane
+ * from an eastbound one.
+ */
+const EASTBOUND_MERIDIAN = 77;
+
+/**
+ * Where a westbound air lane stops being regional and becomes long-haul —
+ * east of it is the Gulf and East Africa, west of it is Europe and the
+ * Atlantic.
+ */
+const LONGHAUL_MERIDIAN = 15;
+
+/**
+ * Which gateway a lane leaves from, given where it is going.
+ *
+ * Every sea lane used to leave Chennai and every air lane Delhi, which left
+ * three of the five gateways drawn as hubs with nothing departing them and
+ * fired seventeen arcs out of two points — the single biggest reason the
+ * subcontinent read as a knot. Splitting the lanes by destination breaks that
+ * starburst into five small fans, and it is how the trade actually moves:
+ * Tuticorin faces the western approaches and Chennai the Bay, Delhi flies the
+ * Atlantic long-haul, Mumbai works the Gulf and Africa, and Bengaluru covers
+ * the East.
+ */
+export function gatewayFor(mode: CorridorMode, lon: number): Gateway {
+  if (mode === "land" || mode === "rail") return OVERLAND_GATEWAY;
+
+  const eastbound = lon >= EASTBOUND_MERIDIAN;
+
+  if (mode === "sea") {
+    return eastbound ? gatewayNamed("Chennai") : gatewayNamed("Tuticorin");
+  }
+
+  if (eastbound) return gatewayNamed("Bengaluru");
+  return lon >= LONGHAUL_MERIDIAN
+    ? gatewayNamed("Mumbai")
+    : gatewayNamed("Delhi");
+}
 
 export interface NetworkRegion {
   name: string;
@@ -200,8 +262,7 @@ export interface NetworkRegion {
 }
 
 // One list drives both the map markers and the corridor chips beneath it, so
-// the two can never disagree about where we operate. India is anchored on the
-// west coast to keep it clear of the Chennai and Tuticorin hub markers.
+// the two can never disagree about where we operate.
 export const NETWORK_REGIONS: NetworkRegion[] = [
   // Served overland rather than through a port, so each anchor is the country
   // centre; far enough from the gateway markers not to crowd them.
@@ -209,11 +270,14 @@ export const NETWORK_REGIONS: NetworkRegion[] = [
   // Landlocked, so there is no sea corridor to claim: cargo goes by road and by
   // rail across the border, which is exactly what the road service sells.
   { name: "Nepal", lat: 28.3, lon: 84.1, modes: ["land", "rail"], dx: 9, dy: -7, anchor: "start" },
-  // Just below its own dot: any lower and it runs into the Chennai gateway
-  // label, which reaches x778 at y206. Reachable all three ways — Chittagong by
-  // sea, the eastern border by road and rail.
+  // Just below its own dot, in the band above Chennai's name — which now runs
+  // east from x737 at y216 and would meet this one anywhere lower. Reachable
+  // all three ways: Chittagong by sea, the eastern border by road and rail.
   { name: "Bangladesh", lat: 23.8, lon: 90.4, modes: ["sea", "land", "rail"], dx: 11, dy: 7, anchor: "start" },
-  { name: "Middle East", lat: 24.5, lon: 54.4, modes: ["sea", "air"], dx: -9, dy: -7, anchor: "end" },
+  // Held one unit further out than the rest: it is the only destination label
+  // that shares a band with the India cluster, and Mumbai's name reaches back
+  // towards it.
+  { name: "Middle East", lat: 24.5, lon: 54.4, modes: ["sea", "air"], dx: -10, dy: -8, anchor: "end" },
   { name: "UK", lat: 52.5, lon: -1.5, modes: ["sea", "air"], dx: -9, dy: -6, anchor: "end" },
   { name: "USA", lat: 39.8, lon: -98.5, modes: ["sea", "air"], dx: 0, dy: -12, anchor: "middle" },
   { name: "South East Asia", lat: 2.5, lon: 102.5, modes: ["sea", "air"], dx: 9, dy: 13, anchor: "start" },
