@@ -20,6 +20,12 @@ interface WorldMapProps {
  * Type ramps for names placed on the map, shared by every caller so the two
  * maps label at one scale.
  *
+ * Sized as cartography, not as UI copy. A name on a world map is an annotation
+ * on a drawing: at UI body sizes "Bengaluru" is 84 map units wide — wider than
+ * the entire gateway cluster it belongs to — and five of them bury the
+ * subcontinent the map is built around. Every one of these names is also in the
+ * copy beside the map, so the map's job is to place them, not to publish them.
+ *
  * Labels are sized in CSS pixels inside a 1000-unit viewBox, so their footprint
  * in map space moves inversely with the panel's width — at `md` a name takes
  * half again as much room as it does at `2xl`, which is why one hand-tuned
@@ -33,9 +39,9 @@ interface WorldMapProps {
  */
 export const MAP_LABEL_CLASS = {
   gateway:
-    "hidden md:block md:text-[11px] lg:text-[13px] xl:text-[16px] 2xl:text-[18px]",
+    "hidden md:block md:text-[10px] lg:text-[11px] xl:text-[12px] 2xl:text-[13px]",
   region:
-    "hidden md:block md:text-[10px] lg:text-[12px] xl:text-[14px] 2xl:text-[16px]",
+    "hidden md:block md:text-[9px] lg:text-[10px] xl:text-[11px] 2xl:text-[12px]",
 } as const;
 
 /** Degrees between graticule lines. 30 gives 11 meridians and 5 parallels. */

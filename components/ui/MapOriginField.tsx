@@ -17,16 +17,20 @@ interface MapOriginFieldProps {
  * thing the eye lands on, which is how the map answers "where do you ship
  * from?" before a single lane has been followed.
  */
-export function MapOriginField({ at, radius = 90 }: MapOriginFieldProps) {
+export function MapOriginField({ at, radius = 72 }: MapOriginFieldProps) {
   return (
     <>
       <defs>
+        {/* Held low and pulled in tight. A field wide or warm enough to be
+            noticed on its own washes out the coastline underneath it, and the
+            one coastline this map cannot afford to lose is the one the whole
+            network leaves from. */}
         <radialGradient id="map-origin-field">
-          <stop offset="0" stopColor="var(--color-route)" stopOpacity="0.28" />
+          <stop offset="0" stopColor="var(--color-route)" stopOpacity="0.17" />
           <stop
             offset="0.5"
             stopColor="var(--color-route)"
-            stopOpacity="0.08"
+            stopOpacity="0.05"
           />
           <stop offset="1" stopColor="var(--color-route)" stopOpacity="0" />
         </radialGradient>

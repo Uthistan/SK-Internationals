@@ -174,7 +174,7 @@ export function GlobalNetworkProcess() {
                     y={region.dy}
                     textAnchor={region.anchor}
                     stroke="var(--color-map-halo)"
-                    strokeWidth="3"
+                    strokeWidth="2.2"
                     strokeLinejoin="round"
                     paintOrder="stroke"
                     className={`fill-white/80 font-semibold ${MAP_LABEL_CLASS.region}`}
@@ -211,8 +211,8 @@ export function GlobalNetworkProcess() {
                       <line
                         {...leader}
                         stroke="var(--color-map-coast)"
-                        strokeOpacity="0.3"
-                        strokeWidth="0.5"
+                        strokeOpacity="0.55"
+                        strokeWidth="0.6"
                         className="hidden md:block"
                       />
                     )}
@@ -225,7 +225,7 @@ export function GlobalNetworkProcess() {
                       y={gateway.dy}
                       textAnchor={gateway.anchor}
                       stroke="var(--color-map-halo)"
-                      strokeWidth="3.5"
+                      strokeWidth="2.6"
                       strokeLinejoin="round"
                       paintOrder="stroke"
                       className={`fill-white font-bold ${MAP_LABEL_CLASS.gateway}`}

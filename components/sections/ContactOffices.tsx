@@ -15,7 +15,7 @@ import { RouteTraces, type Corridor } from "@/components/sections/RouteTraces";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { PlaneIcon, ShipIcon, TruckIcon } from "@/components/ui/VehicleIcons";
 import { CORRIDOR_STYLE } from "@/lib/corridors";
-import { arcPath, project } from "@/lib/geo";
+import { arcPath, MAP_VIEW, project } from "@/lib/geo";
 import {
   GATEWAY_CENTROID,
   GATEWAYS,
@@ -294,12 +294,15 @@ function NetworkBand() {
       data-reveal
       className="map-dark mt-16 w-full overflow-hidden rounded-2xl border border-white/10 bg-secondary"
     >
-      {/* Letterboxed rather than cropped at narrow widths: the map holds its
-          2.5:1 frame and the navy above and below it is the same navy as the
-          panel, so the band simply reads as taller sky and deeper water. The
-          alternative — slicing to fill — would cut the Americas off the left
-          edge, which is the one thing a reach statement cannot afford. */}
-      <div className="aspect-3/2 w-full sm:aspect-2/1 lg:aspect-5/2">
+      {/* Framed to the map's own ratio at every width, exactly as the /services
+          panel is. Letterboxing it into a taller box at narrow widths left a
+          faint seam where the ocean gradient met the panel navy, and cropping
+          to fill would cut the Americas off the left edge — which is the one
+          thing a reach statement cannot afford. */}
+      <div
+        className="w-full"
+        style={{ aspectRatio: `${MAP_VIEW.width} / ${MAP_VIEW.height}` }}
+      >
         <WorldMap label={BAND_MAP_LABEL}>
           <MapOriginField at={BAND_ORIGIN} />
 
@@ -317,7 +320,7 @@ function NetworkBand() {
                   y={region.dy}
                   textAnchor={region.anchor}
                   stroke="var(--color-map-halo)"
-                  strokeWidth="3"
+                  strokeWidth="2.2"
                   strokeLinejoin="round"
                   paintOrder="stroke"
                   className={`fill-white/80 font-semibold ${MAP_LABEL_CLASS.region}`}
@@ -344,7 +347,7 @@ function NetworkBand() {
                   y={gateway.dy}
                   textAnchor={gateway.anchor}
                   stroke="var(--color-map-halo)"
-                  strokeWidth="3.5"
+                  strokeWidth="2.6"
                   strokeLinejoin="round"
                   paintOrder="stroke"
                   className={`fill-white font-bold ${MAP_LABEL_CLASS.gateway}`}

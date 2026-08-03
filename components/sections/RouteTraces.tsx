@@ -156,9 +156,14 @@ export function RouteTraces({ corridors }: RouteTracesProps) {
               />
             )}
 
+            {/* pathLength normalises the route to a single unit so one duration
+                draws a short hop and an ocean crossing at the same apparent
+                speed — but it normalises stroke-dasharray with it, which turns
+                a 4-unit dash into four whole path lengths and renders a dashed
+                lane solid. Only the lanes that actually draw are normalised. */}
             <path
               d={lane.path}
-              pathLength={1}
+              pathLength={style.primary ? 1 : undefined}
               fill="none"
               stroke={style.stroke}
               strokeWidth={style.width}
